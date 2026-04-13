@@ -46,9 +46,23 @@ export function SiteHeader() {
             <small>Portal Oficial</small>
           </span>
         </Link>
-        <Link className="lang-toggle" href={withLang(pathname || '/', nextLang)} title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español'}>
-          <span className="flag flag--cl" aria-hidden="true" title="Español" />
-          <span className="flag flag--us" aria-hidden="true" title="English" />
+        <Link
+          className="lang-toggle"
+          href={withLang(pathname || '/', nextLang)}
+          title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Espanol'}
+        >
+          <span
+            className={`lang-toggle__emoji ${currentLang === 'es' ? 'lang-toggle__emoji--active' : ''}`}
+            aria-label="Espanol"
+          >
+            🇨🇱
+          </span>
+          <span
+            className={`lang-toggle__emoji ${currentLang === 'en' ? 'lang-toggle__emoji--active' : ''}`}
+            aria-label="English"
+          >
+            🇺🇸
+          </span>
         </Link>
         <button
           aria-label={currentLang === 'es' ? 'Abrir menu' : 'Open menu'}
