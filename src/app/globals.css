@@ -96,8 +96,8 @@ main {
 .site-header__brand {
   display: inline-flex;
   align-items: center;
-  flex-direction: column;
-  gap: 0.2rem;
+  flex-direction: row;
+  gap: 0.55rem;
   font-family: var(--font-display), serif;
 }
 
@@ -127,9 +127,17 @@ main {
   fill: var(--gold);
 }
 
-.site-header__brand span {
+.site-header__brand-text {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1;
+}
+
+.site-header__brand-text strong {
   font-size: 1.8rem;
   line-height: 1;
+  font-weight: 600;
 }
 
 .site-header__brand small,

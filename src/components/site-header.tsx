@@ -27,8 +27,10 @@ export function SiteHeader() {
               <circle cx="24" cy="24" r="2.4" className="brand-mark__blip" />
             </svg>
           </span>
-          <span>El Radar TV</span>
-          <small>Portal Oficial</small>
+          <span className="site-header__brand-text">
+            <strong>El Radar TV</strong>
+            <small>Portal Oficial</small>
+          </span>
         </Link>
         <button
           aria-label="Abrir menu"
