@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
         hostname: 'elradartv.cl',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        pathname: '/**',
+      },
     ],
   },
 };
