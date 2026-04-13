@@ -2,22 +2,32 @@
 
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
-const navItems = [
-  { href: '/', label: 'Inicio' },
-  { href: '/elradartv', label: 'En Vivo' },
-  { href: '/deibisromero', label: 'Perfil' },
-  { href: '/epk', label: 'EPK' },
-];
+function withLang(href: string, lang: 'es' | 'en') {
+  return lang === 'en' ? `${href}?lang=en` : href;
+}
 
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentLang: 'es' | 'en' = searchParams.get('lang') === 'en' ? 'en' : 'es';
+  const nextLang: 'es' | 'en' = currentLang === 'es' ? 'en' : 'es';
+
+  const navItems = [
+    { href: '/', label: currentLang === 'es' ? 'Inicio' : 'Home' },
+    { href: '/elradartv', label: currentLang === 'es' ? 'En Vivo' : 'Live' },
+    { href: '/deibisromero', label: currentLang === 'es' ? 'Perfil' : 'Profile' },
+    { href: '/epk', label: 'EPK' },
+  ];
 
   return (
     <header className="site-header">
       <div className="shell site-header__inner">
-        <Link className="site-header__brand" href="/">
+        <Link className="site-header__brand" href={withLang('/', currentLang)}>
           <span className="site-header__brand-mark" aria-hidden="true">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <circle cx="24" cy="24" r="21" className="brand-mark__ring" />
@@ -32,8 +42,15 @@ export function SiteHeader() {
             <small>Portal Oficial</small>
           </span>
         </Link>
+        <Link className="lang-toggle" href={withLang(pathname || '/', nextLang)}>
+          <span className="flag flag--cl" aria-hidden="true" />
+          <span className="lang-toggle__label">ES</span>
+          <span className="lang-toggle__sep">/</span>
+          <span className="lang-toggle__label">EN</span>
+          <span className="flag flag--us" aria-hidden="true" />
+        </Link>
         <button
-          aria-label="Abrir menu"
+          aria-label={currentLang === 'es' ? 'Abrir menu' : 'Open menu'}
           className="site-header__menu-button"
           onClick={() => setIsOpen((value) => !value)}
           type="button"
@@ -42,7 +59,7 @@ export function SiteHeader() {
         </button>
         <nav className={`site-header__nav ${isOpen ? 'site-header__nav--open' : ''}`} aria-label="Navegacion principal">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+            <Link key={item.href} href={withLang(item.href, currentLang)} onClick={() => setIsOpen(false)}>
               {item.label}
             </Link>
           ))}

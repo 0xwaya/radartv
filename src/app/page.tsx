@@ -16,7 +16,81 @@ import {
 import { buildOrganizationSchema, buildPersonSchema } from '@/lib/seo/schema';
 import { getTopStreams } from '@/lib/youtube-streams';
 
-export default async function HomePage() {
+type HomePageProps = {
+  searchParams?: {
+    lang?: string;
+  };
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const lang = searchParams?.lang === 'en' ? 'en' : 'es';
+  const langSuffix = lang === 'en' ? '?lang=en' : '';
+
+  const t = {
+    heroEyebrow: lang === 'es' ? 'Portal Oficial · Chile' : 'Official Portal · Chile',
+    heroTitle: lang === 'es' ? 'TV y Radio en vivo, sin rodeos.' : 'Live TV and Radio, no friction.',
+    heroBody:
+      lang === 'es'
+        ? brandSummary.body
+        : 'This portal prioritizes live TV and Radio for Chilean audiences with direct access to contact and social channels.',
+    profileBtn: lang === 'es' ? 'Perfil de Deibis' : 'Deibis Profile',
+    mediaBtn: 'El Radar TV',
+    heroKicker: lang === 'es' ? 'En vivo primero' : 'Live first',
+    heroSub: lang === 'es' ? 'Acceso rapido para escuchar y ver.' : 'Quick access to watch and listen.',
+    heroDesc:
+      lang === 'es'
+        ? 'Interfaz simplificada para priorizar reproduccion en directo y contacto inmediato.'
+        : 'Simplified interface focused on live playback and instant contact.',
+    radioCardDesc:
+      lang === 'es'
+        ? 'Escucha la senal principal 24/7 con el reproductor integrado.'
+        : 'Listen to the main 24/7 feed with the integrated player.',
+    tvCardDesc:
+      lang === 'es'
+        ? 'Abre la transmision de video en directo en un toque.'
+        : 'Open the live video feed in one tap.',
+    contactCardTitle: lang === 'es' ? 'Habla con Deibis' : 'Talk to Deibis',
+    contactCardDesc:
+      lang === 'es'
+        ? 'Consulta por WhatsApp para colaboraciones, entrevistas o contrataciones.'
+        : 'Reach out by WhatsApp for collaborations, interviews, or bookings.',
+    openWhatsapp: lang === 'es' ? 'Abrir WhatsApp' : 'Open WhatsApp',
+    contactSectionEyebrow: lang === 'es' ? 'Contacto rapido' : 'Quick Contact',
+    contactSectionTitle:
+      lang === 'es' ? '¿Quieres hablar con Deibis ahora?' : 'Want to talk to Deibis right now?',
+    contactSectionDesc:
+      lang === 'es'
+        ? 'Usa WhatsApp para una respuesta directa o envia consulta comercial por correo.'
+        : 'Use WhatsApp for direct contact or send a business inquiry by email.',
+    channelRecommended: lang === 'es' ? 'Canal recomendado' : 'Recommended channel',
+    whatsappDirect: lang === 'es' ? 'WhatsApp directo' : 'Direct WhatsApp',
+    whatsappHint:
+      lang === 'es'
+        ? 'Si defines NEXT_PUBLIC_WHATSAPP_NUMBER, este boton abre chat directo con mensaje precargado.'
+        : 'If NEXT_PUBLIC_WHATSAPP_NUMBER is set, this button opens direct chat with a prefilled message.',
+    streamsEyebrow: lang === 'es' ? 'Top Streams' : 'Top Streams',
+    streamsTitle:
+      lang === 'es'
+        ? 'Panel de transmisiones destacadas'
+        : 'Featured streams dashboard',
+    streamsDesc:
+      lang === 'es'
+        ? 'Ultimos directos y emisiones del canal oficial de Deibis en YouTube.'
+        : 'Latest broadcasts from Deibis official YouTube channel.',
+    openStream: lang === 'es' ? 'Abrir Stream' : 'Open Stream',
+    openStreamsGallery:
+      lang === 'es' ? 'Ver galeria completa de streams' : 'View full stream gallery',
+    socialEyebrow: lang === 'es' ? 'Redes' : 'Social',
+    socialTitle:
+      lang === 'es'
+        ? 'Sigue la señal en plataformas sociales'
+        : 'Follow the signal across social platforms',
+    socialDesc:
+      lang === 'es'
+        ? 'Canales oficiales para contenido, clips y anuncios.'
+        : 'Official channels for content, clips, and updates.',
+  };
+
   const schemas = [buildPersonSchema(), buildOrganizationSchema()];
   const topStreams = await getTopStreams(6);
 
@@ -24,11 +98,9 @@ export default async function HomePage() {
     <>
       <section className="hero shell">
         <div className="hero__content">
-          <span className="hero__eyebrow">Portal Oficial · Chile</span>
-          <h1>
-            TV y Radio en vivo, sin rodeos.
-          </h1>
-          <p>{brandSummary.body}</p>
+          <span className="hero__eyebrow">{t.heroEyebrow}</span>
+          <h1>{t.heroTitle}</h1>
+          <p>{t.heroBody}</p>
           <div className="hero__actions">
             <PlayerLaunchButton track={liveTrack} />
             <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
@@ -39,21 +111,19 @@ export default async function HomePage() {
             </a>
           </div>
           <div className="hero__actions">
-            <Link className="button button--secondary" href="/deibisromero">
-              Perfil de Deibis
+            <Link className="button button--secondary" href={`/deibisromero${langSuffix}`}>
+              {t.profileBtn}
             </Link>
-            <Link className="button button--secondary" href="/elradartv">
-              El Radar TV
+            <Link className="button button--secondary" href={`/elradartv${langSuffix}`}>
+              {t.mediaBtn}
             </Link>
           </div>
         </div>
         <div className="hero__visual card card--feature">
           <div className="hero__visual-copy">
-            <p className="kicker">En vivo primero</p>
-            <h2>Acceso rapido para escuchar y ver.</h2>
-            <p>
-              Interfaz simplificada para priorizar reproduccion en directo y contacto inmediato.
-            </p>
+            <p className="kicker">{t.heroKicker}</p>
+            <h2>{t.heroSub}</h2>
+            <p>{t.heroDesc}</p>
           </div>
           <RadarVector className="hero__radar" />
         </div>
@@ -63,52 +133,50 @@ export default async function HomePage() {
         <article className="card card--brand">
           <span className="pill">RADIO</span>
           <h3>El Radar Radio En Vivo</h3>
-          <p>Escucha la senal principal 24/7 con el reproductor integrado.</p>
+          <p>{t.radioCardDesc}</p>
           <PlayerLaunchButton track={liveTrack} variant="secondary" />
         </article>
         <article className="card card--brand card--accent">
           <span className="pill">TV</span>
           <h3>El Radar TV En Vivo</h3>
-          <p>Abre la transmision de video en directo en un toque.</p>
+          <p>{t.tvCardDesc}</p>
           <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
             Ver TV En Vivo
           </a>
         </article>
         <article className="card card--brand">
           <span className="pill">CONTACTO</span>
-          <h3>Habla con Deibis</h3>
-          <p>Consulta por WhatsApp para colaboraciones, entrevistas o contrataciones.</p>
+          <h3>{t.contactCardTitle}</h3>
+          <p>{t.contactCardDesc}</p>
           <a className="button button--secondary" href={whatsappLink} rel="noreferrer" target="_blank">
-            Abrir WhatsApp
+            {t.openWhatsapp}
           </a>
         </article>
       </section>
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="Contacto rapido"
-          title="¿Quieres hablar con Deibis ahora?"
-          description="Usa WhatsApp para una respuesta directa o envia consulta comercial por correo."
+          eyebrow={t.contactSectionEyebrow}
+          title={t.contactSectionTitle}
+          description={t.contactSectionDesc}
         />
         <div className="cta-panel card card--feature">
           <div>
-            <p className="kicker">Canal recomendado</p>
-            <h3>WhatsApp directo</h3>
-            <p>
-              Si defines NEXT_PUBLIC_WHATSAPP_NUMBER, este boton abre chat directo con mensaje precargado.
-            </p>
+            <p className="kicker">{t.channelRecommended}</p>
+            <h3>{t.whatsappDirect}</h3>
+            <p>{t.whatsappHint}</p>
           </div>
           <a className="button button--primary" href={whatsappLink} rel="noreferrer" target="_blank">
-            Abrir WhatsApp
+            {t.openWhatsapp}
           </a>
         </div>
       </section>
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="Top Streams"
-          title="Panel de transmisiones destacadas"
-          description="Ultimos directos y emisiones del canal oficial de Deibis en YouTube."
+          eyebrow={t.streamsEyebrow}
+          title={t.streamsTitle}
+          description={t.streamsDesc}
         />
         <div className="streams-grid">
           {topStreams.map((stream) => (
@@ -131,7 +199,7 @@ export default async function HomePage() {
                 <p className="kicker">YouTube Live</p>
                 <h3>{stream.title}</h3>
                 <a className="button button--secondary" href={stream.url} rel="noreferrer" target="_blank">
-                  Abrir Stream
+                  {t.openStream}
                 </a>
               </div>
             </article>
@@ -139,16 +207,16 @@ export default async function HomePage() {
         </div>
         <div className="hero__actions">
           <a className="button button--secondary" href={youtubeStreamsUrl} rel="noreferrer" target="_blank">
-            Ver galeria completa de streams
+            {t.openStreamsGallery}
           </a>
         </div>
       </section>
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="Redes"
-          title="Sigue la señal en plataformas sociales"
-          description="Canales oficiales para contenido, clips y anuncios."
+          eyebrow={t.socialEyebrow}
+          title={t.socialTitle}
+          description={t.socialDesc}
         />
         <div className="social-strip card">
           {socialLinks.map((item) => (
