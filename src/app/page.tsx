@@ -17,13 +17,14 @@ import { buildOrganizationSchema, buildPersonSchema } from '@/lib/seo/schema';
 import { getTopStreams } from '@/lib/youtube-streams';
 
 type HomePageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     lang?: string;
-  };
+  }>;
 };
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const lang = searchParams?.lang === 'en' ? 'en' : 'es';
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const lang = resolvedSearchParams.lang === 'en' ? 'en' : 'es';
   const langSuffix = lang === 'en' ? '?lang=en' : '';
 
   const t = {
@@ -60,15 +61,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       lang === 'es' ? '¿Quieres hablar con Deibis ahora?' : 'Want to talk to Deibis right now?',
     contactSectionDesc:
       lang === 'es'
-        ? 'Usa WhatsApp para una respuesta directa o envia consulta comercial por correo.'
-        : 'Use WhatsApp for direct contact or send a business inquiry by email.',
+        ? 'Escribe por WhatsApp para contacto directo con Deibis y su equipo.'
+        : 'Reach out on WhatsApp for direct contact with Deibis and his team.',
     channelRecommended: lang === 'es' ? 'Canal recomendado' : 'Recommended channel',
     whatsappDirect: lang === 'es' ? 'WhatsApp directo' : 'Direct WhatsApp',
     whatsappHint:
       lang === 'es'
-        ? 'Si defines NEXT_PUBLIC_WHATSAPP_NUMBER, este boton abre chat directo con mensaje precargado.'
-        : 'If NEXT_PUBLIC_WHATSAPP_NUMBER is set, this button opens direct chat with a prefilled message.',
-    streamsEyebrow: lang === 'es' ? 'Top Streams' : 'Top Streams',
+        ? 'Canal recomendado para colaboraciones, entrevistas, eventos y contrataciones.'
+        : 'Recommended channel for collaborations, interviews, events, and bookings.',
+    streamsEyebrow: lang === 'es' ? 'Streams destacados' : 'Top Streams',
     streamsTitle:
       lang === 'es'
         ? 'Panel de transmisiones destacadas'
@@ -79,7 +80,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         : 'Latest broadcasts from Deibis official YouTube channel.',
     openStream: lang === 'es' ? 'Abrir Stream' : 'Open Stream',
     openStreamsGallery:
-      lang === 'es' ? 'Ver galeria completa de streams' : 'View full stream gallery',
+      lang === 'es' ? 'Ver todos los streams' : 'View full stream gallery',
     socialEyebrow: lang === 'es' ? 'Redes' : 'Social',
     socialTitle:
       lang === 'es'
@@ -105,9 +106,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <PlayerLaunchButton track={liveTrack} />
             <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
               {ctaBlocks.stream.label}
-            </a>
-            <a className="button button--secondary" href={whatsappLink} rel="noreferrer" target="_blank">
-              WhatsApp
             </a>
           </div>
           <div className="hero__actions">

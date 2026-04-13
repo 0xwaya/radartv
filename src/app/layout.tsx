@@ -35,6 +35,15 @@ export const metadata: Metadata = {
     siteName: 'El Radar TV',
     locale: 'es_CL',
     type: 'website',
+    images: [
+      {
+        url: '/og-radar.png',
+        width: 1200,
+        height: 630,
+        alt: 'El Radar TV - Portal Oficial',
+        type: 'image/png',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

@@ -2,8 +2,8 @@
 
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 function withLang(href: string, lang: 'es' | 'en') {
   return lang === 'en' ? `${href}?lang=en` : href;
@@ -12,9 +12,13 @@ function withLang(href: string, lang: 'es' | 'en') {
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [currentLang, setCurrentLang] = useState<'es' | 'en'>('es');
 
-  const currentLang: 'es' | 'en' = searchParams.get('lang') === 'en' ? 'en' : 'es';
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCurrentLang(params.get('lang') === 'en' ? 'en' : 'es');
+  }, []);
+
   const nextLang: 'es' | 'en' = currentLang === 'es' ? 'en' : 'es';
 
   const navItems = [

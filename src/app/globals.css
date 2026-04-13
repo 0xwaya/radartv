@@ -103,9 +103,9 @@ main {
 
 .site-header__brand-mark {
   display: inline-flex;
-  width: 32px;
-  height: 32px;
-  margin-right: 0.55rem;
+  width: 44px;
+  height: 44px;
+  margin-right: 0.2rem;
 }
 
 .site-header__brand-mark svg {
@@ -132,6 +132,8 @@ main {
   flex-direction: column;
   gap: 0.1rem;
   line-height: 1;
+  align-items: center;
+  text-align: center;
 }
 
 .site-header__brand-text strong {
@@ -149,6 +151,12 @@ main {
   letter-spacing: 0.18em;
   font-size: 0.72rem;
   color: var(--cyan);
+}
+
+.site-header__brand small {
+  display: block;
+  width: 100%;
+  font-size: 0.64rem;
 }
 
 .site-header__nav {
