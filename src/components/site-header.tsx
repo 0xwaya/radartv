@@ -46,12 +46,9 @@ export function SiteHeader() {
             <small>Portal Oficial</small>
           </span>
         </Link>
-        <Link className="lang-toggle" href={withLang(pathname || '/', nextLang)}>
-          <span className="flag flag--cl" aria-hidden="true" />
-          <span className="lang-toggle__label">ES</span>
-          <span className="lang-toggle__sep">/</span>
-          <span className="lang-toggle__label">EN</span>
-          <span className="flag flag--us" aria-hidden="true" />
+        <Link className="lang-toggle" href={withLang(pathname || '/', nextLang)} title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español'}>
+          <span className="flag flag--cl" aria-hidden="true" title="Español" />
+          <span className="flag flag--us" aria-hidden="true" title="English" />
         </Link>
         <button
           aria-label={currentLang === 'es' ? 'Abrir menu' : 'Open menu'}
