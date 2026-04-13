@@ -49,19 +49,10 @@ export function SiteHeader() {
         <Link
           className="lang-toggle"
           href={withLang(pathname || '/', nextLang)}
-          title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Espanol'}
+          title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
         >
-          <span
-            className={`lang-toggle__emoji ${currentLang === 'es' ? 'lang-toggle__emoji--active' : ''}`}
-            aria-label="Espanol"
-          >
-            🇨🇱
-          </span>
-          <span
-            className={`lang-toggle__emoji ${currentLang === 'en' ? 'lang-toggle__emoji--active' : ''}`}
-            aria-label="English"
-          >
-            🇺🇸
+          <span className="lang-toggle__emoji" aria-label={nextLang === 'en' ? 'English' : 'Español'}>
+            {nextLang === 'en' ? '🇺🇸' : '🇨🇱'}
           </span>
         </Link>
         <button
