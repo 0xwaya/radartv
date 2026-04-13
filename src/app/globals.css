@@ -95,9 +95,36 @@ main {
 
 .site-header__brand {
   display: inline-flex;
+  align-items: center;
   flex-direction: column;
   gap: 0.2rem;
   font-family: var(--font-display), serif;
+}
+
+.site-header__brand-mark {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  margin-right: 0.55rem;
+}
+
+.site-header__brand-mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.brand-mark__ring {
+  fill: none;
+  stroke: rgba(114, 212, 232, 0.7);
+  stroke-width: 1.6;
+}
+
+.brand-mark__sweep {
+  fill: rgba(114, 212, 232, 0.36);
+}
+
+.brand-mark__blip {
+  fill: var(--gold);
 }
 
 .site-header__brand span {
@@ -120,6 +147,15 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+}
+
+.site-header__menu-button {
+  display: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.5rem;
 }
 
 .site-header__nav a {
@@ -641,8 +677,32 @@ main {
   .site-header__inner {
     min-height: auto;
     padding: 1rem 0;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .site-header__brand {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .site-header__menu-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+  }
+
+  .site-header__nav {
+    display: none;
+    width: 100%;
     flex-direction: column;
-    align-items: flex-start;
+    gap: 0.7rem;
+    padding-top: 0.75rem;
+  }
+
+  .site-header__nav--open {
+    display: flex;
   }
 
   .global-player__controls {

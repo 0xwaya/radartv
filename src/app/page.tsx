@@ -7,7 +7,6 @@ import { SectionHeading } from '@/components/section-heading';
 import {
   brandSummary,
   ctaBlocks,
-  deibisProfile,
   liveTrack,
   socialLinks,
   watchLiveUrl,
@@ -57,7 +56,6 @@ export default async function HomePage() {
             </p>
           </div>
           <RadarVector className="hero__radar" />
-          <Image alt={deibisProfile.name} height={560} src={deibisProfile.image} width={560} />
         </div>
       </section>
 
