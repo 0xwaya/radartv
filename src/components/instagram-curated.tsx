@@ -1,20 +1,25 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { instagramHighlights, instagramProfileUrl } from '@/content/site';
-import { externalAnchorProps } from '@/lib/external-href';
+import { instagramBridgePath } from '@/lib/external-href';
 
 type InstagramCuratedProps = {
   eyebrow?: string;
   title?: string;
   description?: string;
+  /** When true, CTAs open Instagram directly (for the bridge page itself). */
+  directProfileCta?: boolean;
 };
 
 export function InstagramCurated({
   eyebrow = 'Instagram',
   title = 'Desde @deibisromero',
-  description = 'Selección editorial del feed: estudio, terreno, Biobío y bastidores. Instagram sigue siendo el canal del día a día.',
+  description = 'Selección editorial del feed: estudio, terreno, Biobío y bastidores. El contenido vive aquí; Instagram es el canal del día a día.',
+  directProfileCta = false,
 }: InstagramCuratedProps) {
-  const profileLink = externalAnchorProps(instagramProfileUrl);
+  const ctaClass = 'button button--secondary';
+  const linkClass = 'text-link';
 
   return (
     <section className="shell content-block ig-curated">
@@ -24,17 +29,27 @@ export function InstagramCurated({
           <h2>{title}</h2>
           <p>{description}</p>
         </div>
-        <a className="button button--secondary" {...profileLink}>
-          Seguir en Instagram
-        </a>
+        {directProfileCta ? (
+          <a
+            className={ctaClass}
+            href={instagramProfileUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Abrir perfil en Instagram
+          </a>
+        ) : (
+          <Link className={ctaClass} href={instagramBridgePath}>
+            Abrir @deibisromero
+          </Link>
+        )}
       </div>
 
       <div className="ig-curated__grid">
         {instagramHighlights.map((item, index) => (
-          <a
+          <article
             key={item.id}
             className={`ig-tile${index === 0 ? ' ig-tile--feature' : ''}`}
-            {...externalAnchorProps(item.href)}
           >
             <div className="ig-tile__media">
               <Image
@@ -50,9 +65,22 @@ export function InstagramCurated({
             <div className="ig-tile__copy">
               <h3>{item.title}</h3>
               <p>{item.caption}</p>
-              <span className="text-link">Ver en Instagram</span>
+              {directProfileCta ? (
+                <a
+                  className={linkClass}
+                  href={instagramProfileUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Abrir en Instagram
+                </a>
+              ) : (
+                <Link className={linkClass} href={instagramBridgePath}>
+                  Ver perfil
+                </Link>
+              )}
             </div>
-          </a>
+          </article>
         ))}
       </div>
     </section>

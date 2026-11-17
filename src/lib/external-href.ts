@@ -1,8 +1,11 @@
 /**
  * Instagram mobile web often tries to hand off via `instagram://…`.
- * Opera treats that custom scheme as an invalid address, especially in a new tab.
- * Same-tab HTTPS navigation keeps the web profile usable after dismissing the dialog.
+ * Opera (and some WebViews) reject that custom scheme as an “invalid address”.
+ * Route Instagram CTAs through our same-origin bridge first; open the real profile
+ * only from an explicit new-tab click on that page.
  */
+export const instagramBridgePath = '/go/instagram';
+
 export function isInstagramHref(href: string): boolean {
   try {
     const host = new URL(href).hostname.replace(/^www\./, '');
@@ -14,11 +17,11 @@ export function isInstagramHref(href: string): boolean {
 
 export function externalAnchorProps(href: string): {
   href: string;
-  rel: 'noopener noreferrer';
+  rel?: 'noopener noreferrer';
   target?: '_blank';
 } {
   if (isInstagramHref(href)) {
-    return { href, rel: 'noopener noreferrer' };
+    return { href: instagramBridgePath };
   }
   return { href, rel: 'noopener noreferrer', target: '_blank' };
 }

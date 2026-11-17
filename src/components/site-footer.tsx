@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { appLinks, deibisProfile, instagramProfileUrl, socialLinks, whatsappLink } from '@/content/site';
-import { externalAnchorProps } from '@/lib/external-href';
+import { appLinks, deibisProfile, socialLinks, whatsappLink } from '@/content/site';
+import { externalAnchorProps, instagramBridgePath } from '@/lib/external-href';
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -17,9 +17,9 @@ export function SiteFooter() {
               Portal oficial de Deibis Romero en Chile: TV y radio en vivo, perfil profesional y
               contacto directo.
             </p>
-            <a className="site-footer__ig" {...externalAnchorProps(instagramProfileUrl)}>
+            <Link className="site-footer__ig" href={instagramBridgePath}>
               @deibisromero
-            </a>
+            </Link>
           </div>
 
           <div className="site-footer__columns">
