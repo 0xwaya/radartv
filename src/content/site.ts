@@ -59,6 +59,44 @@ export const appLinks = [
   },
 ];
 
+export const instagramProfileUrl = 'https://www.instagram.com/deibisromero';
+
+/** Curated highlights aligned with @deibisromero themes (IG is login-walled; visuals cached locally). */
+export const instagramHighlights = [
+  {
+    id: 'noticias',
+    tag: 'Actualidad',
+    title: 'Noticias al día',
+    caption: 'Titulares y cobertura diaria — el mismo pulso informativo que mueve el feed de @deibisromero.',
+    image: '/images/curated/P-azZUZCTrk.jpg',
+    href: instagramProfileUrl,
+  },
+  {
+    id: 'entrevista',
+    tag: 'Entrevista',
+    title: 'Conversaciones al aire',
+    caption: 'Encuentros y voces invitadas: el tono cercano que también aparece en stories y reels.',
+    image: '/images/curated/OtQoAX_udno.jpg',
+    href: instagramProfileUrl,
+  },
+  {
+    id: 'territorio',
+    tag: 'Chile',
+    title: 'Historias del Biobío',
+    caption: 'Reportajes y visitas locales desde Concepción y alrededores.',
+    image: '/images/curated/Kh1x9NT2Ln0.jpg',
+    href: instagramProfileUrl,
+  },
+  {
+    id: 'behind',
+    tag: 'Bastidores',
+    title: 'Fuera de micrófono',
+    caption: 'Momentos cotidianos y comunidad — lo que Instagram lleva primero.',
+    image: '/images/curated/ims3HTrkG3k.jpg',
+    href: instagramProfileUrl,
+  },
+];
+
 export const liveTrack: Track = {
   id: 'deibis-live-radio',
   title: 'El Radar Radio En Vivo',
