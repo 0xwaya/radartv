@@ -102,9 +102,11 @@ export const liveTrack: Track = {
   id: 'deibis-live-radio',
   title: 'El Radar Radio En Vivo',
   subtitle: 'Música 24/7, actualidad e identidad en vivo de Deibis Romero',
-  url: 'https://acp2.lorini.net:27050/stream',
+  url:
+    process.env.NEXT_PUBLIC_RADIO_STREAM_URL?.trim() ||
+    'https://stream2.ipstream.cl/8018/stream',
   kind: 'live',
-  externalUrl: 'https://player.lorini.net/drtv',
+  externalUrl: 'https://stream2.ipstream.cl/8018/stream',
 };
 
 export const watchLiveUrl = 'https://video.ipstream.cl:3459/hybrid/play.m3u8';
