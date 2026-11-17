@@ -1,8 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { Play } from 'lucide-react';
 
-import { watchLiveEmbedUrl, watchLiveHlsUrl } from '@/content/site';
+import { usePlayer } from '@/components/player/player-provider';
+import { deibisProfile, watchLiveEmbedSrc, watchLiveHlsUrl } from '@/content/site';
 import { requestLiveTvPlay } from '@/lib/live-media-events';
 
 type LiveTvPlayerProps = {
@@ -11,31 +13,56 @@ type LiveTvPlayerProps = {
 };
 
 /**
- * Official tvstream embed. Keep the iframe stable — remounting/pausing it from
- * radio events was causing glitchy reloads while a live signal is on air.
+ * Click-to-play official tvstream embed.
+ * Idle = poster only (no iframe, nothing playing in background).
+ * Active = mount iframe with autoplay after an explicit user gesture.
+ * Radio start calls stopTv() which unmounts this iframe and kills the stream.
  */
 export function LiveTvPlayer({
   title = 'El Radar TV En Vivo',
   className = '',
 }: LiveTvPlayerProps) {
+  const { isTvActive, startTv } = usePlayer();
+
   return (
     <div className={`live-tv ${className}`.trim()} id="tv-en-vivo">
       <div className="live-tv__frame live-tv__frame--embed">
-        <iframe
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowFullScreen
-          className="live-tv__iframe"
-          referrerPolicy="origin"
-          scrolling="no"
-          src={watchLiveEmbedUrl}
-          title={title}
-        />
-        <div className="live-tv__chrome" aria-hidden="true">
-          <span className="live-tv__badge">
-            <span className="live-pulse" aria-hidden="true" />
-            En vivo
-          </span>
-        </div>
+        {isTvActive ? (
+          <iframe
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            className="live-tv__iframe"
+            referrerPolicy="origin"
+            scrolling="no"
+            src={watchLiveEmbedSrc(true)}
+            title={title}
+          />
+        ) : (
+          <>
+            <Image
+              alt=""
+              className="live-tv__poster"
+              fill
+              sizes="(max-width: 900px) 100vw, 900px"
+              src={deibisProfile.image}
+            />
+            <div className="live-tv__idle">
+              <div className="live-tv__badge">
+                <span className="live-pulse" aria-hidden="true" />
+                <span>En vivo</span>
+              </div>
+              <button
+                aria-label="Reproducir TV en vivo"
+                className="live-tv__play"
+                onClick={() => startTv()}
+                type="button"
+              >
+                <Play size={18} />
+                Ver en vivo
+              </button>
+            </div>
+          </>
+        )}
       </div>
       <div className="live-tv__meta">
         <div>
@@ -43,12 +70,19 @@ export function LiveTvPlayer({
           <h3>{title}</h3>
         </div>
         <p>
-          Señal oficial en vivo vía tvstream.cl.{' '}
+          {isTvActive
+            ? 'Reproduciendo señal oficial (tvstream.cl). '
+            : 'Toca Ver en vivo o el botón del hero para iniciar. '}
           <a className="text-link" href={watchLiveHlsUrl} rel="noreferrer" target="_blank">
             HLS directo
           </a>
           {' · '}
-          <a className="text-link" href={watchLiveEmbedUrl} rel="noreferrer" target="_blank">
+          <a
+            className="text-link"
+            href={watchLiveEmbedSrc(true)}
+            rel="noreferrer"
+            target="_blank"
+          >
             Abrir fuente
           </a>
         </p>

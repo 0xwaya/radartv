@@ -932,22 +932,35 @@ main {
   padding-top: 0;
 }
 
-.live-tv__iframe {
+.live-tv__iframe,
+.live-tv__poster {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
+  object-fit: cover;
   background: #050b15;
   z-index: 1;
 }
 
-.live-tv__chrome {
+.live-tv__idle {
   position: absolute;
-  top: 0.85rem;
-  left: 0.85rem;
+  inset: 0;
   z-index: 2;
-  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  background:
+    linear-gradient(180deg, rgba(5, 11, 21, 0.45) 0%, transparent 30%),
+    linear-gradient(0deg, rgba(5, 11, 21, 0.78) 0%, transparent 42%);
+}
+
+.live-tv__idle .live-tv__play {
+  pointer-events: auto;
+  align-self: flex-start;
 }
 
 .action-rail--compact {

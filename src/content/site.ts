@@ -109,18 +109,35 @@ export const liveTrack: Track = {
   externalUrl: 'https://stream2.ipstream.cl/8018/stream',
 };
 
-/** Official El Radar TV player embed from Deibis / tvstream.cl */
-export const watchLiveEmbedUrl =
-  process.env.NEXT_PUBLIC_TV_EMBED_URL?.trim() ||
-  'https://panel.tvstream.cl:2020/VideoPlayer/xzfsepkbtx?autoplay=1';
+/** Official El Radar TV player embed from Deibis / tvstream.cl (no autoplay by default). */
+export const watchLiveEmbedBaseUrl =
+  process.env.NEXT_PUBLIC_TV_EMBED_URL?.trim()?.replace(/[?&]autoplay=1/, '') ||
+  'https://panel.tvstream.cl:2020/VideoPlayer/xzfsepkbtx';
+
+export function watchLiveEmbedSrc(autoplay: boolean) {
+  try {
+    const url = new URL(watchLiveEmbedBaseUrl);
+    if (autoplay) {
+      url.searchParams.set('autoplay', '1');
+    } else {
+      url.searchParams.delete('autoplay');
+    }
+    return url.toString();
+  } catch {
+    return autoplay ? `${watchLiveEmbedBaseUrl}?autoplay=1` : watchLiveEmbedBaseUrl;
+  }
+}
+
+/** @deprecated Prefer watchLiveEmbedSrc(true|false) */
+export const watchLiveEmbedUrl = watchLiveEmbedSrc(true);
 
 /** Direct HLS mirror (same station key); kept as optional fallback / “Abrir fuente”. */
 export const watchLiveHlsUrl =
   process.env.NEXT_PUBLIC_TV_HLS_URL?.trim() ||
   'https://panel.tvstream.cl:1936/xzfsepkbtx/xzfsepkbtx/playlist.m3u8';
 
-/** Primary watch URL used by CTAs (the hosted embed). */
-export const watchLiveUrl = watchLiveEmbedUrl;
+/** Primary watch URL used by CTAs (opens embed; autoplay only after click). */
+export const watchLiveUrl = watchLiveEmbedSrc(true);
 
 export const clipTracks: Track[] = [
   {

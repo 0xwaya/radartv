@@ -1,19 +1,15 @@
-/** Lightweight coordination — avoid remounting the live TV iframe. */
+/** Dispatched after a user click so LiveTvPlayer can mount the embed. */
+
+export const LIVE_TV_PLAY_EVENT = 'radartv:play-live-tv';
 
 export function requestLiveTvPlay() {
   if (typeof window === 'undefined') {
     return;
   }
 
-  const target = document.getElementById('tv-en-vivo');
-  target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-export function pauseLiveTv() {
-  // Intentionally a no-op: tearing down the tvstream iframe mid-broadcast
-  // caused glitchy reloads. Radio and TV can coexist; the user controls each.
-}
-
-export function notifyLiveRadioPlay() {
-  // No-op companion for pauseLiveTv — kept so call sites stay stable.
+  document.getElementById('tv-en-vivo')?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  });
+  window.dispatchEvent(new CustomEvent(LIVE_TV_PLAY_EVENT));
 }

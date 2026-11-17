@@ -11,15 +11,22 @@ import {
 } from 'react';
 
 import { deibisProfile, liveTrack, type Track } from '@/content/site';
+import { LIVE_TV_PLAY_EVENT } from '@/lib/live-media-events';
+
+export type ActiveMedium = 'none' | 'radio' | 'tv';
 
 type PlayerContextValue = {
   currentTrack: Track | null;
   isPlaying: boolean;
   isLoading: boolean;
+  isTvActive: boolean;
+  activeMedium: ActiveMedium;
   volume: number;
   errorMessage: string | null;
   playTrack: (track: Track) => Promise<void>;
   togglePlayback: () => Promise<void>;
+  startTv: () => void;
+  stopTv: () => void;
   setVolume: (volume: number) => void;
   stop: () => void;
   clearError: () => void;
@@ -57,13 +64,47 @@ function ensureAudioElement(audioRef: { current: HTMLAudioElement | null }) {
   return audio;
 }
 
+function hardStopAudio(audio: HTMLAudioElement) {
+  audio.pause();
+  audio.removeAttribute('src');
+  audio.load();
+}
+
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isTvActive, setIsTvActive] = useState(false);
   const [volume, setVolumeState] = useState(0.72);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const activeMedium: ActiveMedium = isTvActive ? 'tv' : isPlaying || isLoading ? 'radio' : 'none';
+
+  const stopTv = useCallback(() => {
+    setIsTvActive(false);
+  }, []);
+
+  const stopRadio = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) {
+      setIsPlaying(false);
+      setIsLoading(false);
+      return;
+    }
+    hardStopAudio(audio);
+    setIsPlaying(false);
+    setIsLoading(false);
+  }, []);
+
+  const startTv = useCallback(() => {
+    stopRadio();
+    setIsTvActive(true);
+    document.getElementById('tv-en-vivo')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  }, [stopRadio]);
 
   useEffect(() => {
     const audio = ensureAudioElement(audioRef);
@@ -111,7 +152,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     audio.addEventListener('error', handleError);
 
     return () => {
-      audio.pause();
+      hardStopAudio(audio);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('pause', handlePause);
@@ -126,54 +167,71 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     syncMediaSession(currentTrack, isPlaying);
   }, [currentTrack, isPlaying]);
 
-  const playTrack = useCallback(async (track: Track) => {
-    if (!track.url) {
-      if (track.externalUrl) {
-        window.open(track.externalUrl, '_blank', 'noopener,noreferrer');
-      }
-      return;
-    }
+  // Hero “Ver TV En Vivo” and in-player CTA both go through this event.
+  useEffect(() => {
+    const onPlayTv = () => startTv();
+    window.addEventListener(LIVE_TV_PLAY_EVENT, onPlayTv);
+    return () => window.removeEventListener(LIVE_TV_PLAY_EVENT, onPlayTv);
+  }, [startTv]);
 
-    const audio = ensureAudioElement(audioRef);
-    setCurrentTrack(track);
-    setErrorMessage(null);
-    setIsLoading(true);
-
-    try {
-      const alreadyLoaded =
-        Boolean(audio.src) &&
-        (audio.src === track.url || audio.src.startsWith(`${track.url}?`) || audio.src.startsWith(`${track.url}&`));
-
-      if (!alreadyLoaded) {
-        audio.src = track.url;
-        audio.load();
+  const playTrack = useCallback(
+    async (track: Track) => {
+      if (!track.url) {
+        if (track.externalUrl) {
+          window.open(track.externalUrl, '_blank', 'noopener,noreferrer');
+        }
+        return;
       }
 
-      await audio.play();
-    } catch {
-      // One reconnect attempt for stalled live streams.
+      // Exclusive: radio kills TV embed so it cannot keep playing in the background.
+      stopTv();
+
+      const audio = ensureAudioElement(audioRef);
+      setCurrentTrack(track);
+      setErrorMessage(null);
+      setIsLoading(true);
+
       try {
-        audio.src = track.url;
-        audio.load();
+        const alreadyLoaded =
+          Boolean(audio.getAttribute('src')) &&
+          (audio.src === track.url ||
+            audio.src.startsWith(`${track.url}?`) ||
+            audio.src.startsWith(`${track.url}&`));
+
+        if (!alreadyLoaded) {
+          audio.src = track.url;
+          audio.load();
+        }
+
         await audio.play();
       } catch {
-        setIsPlaying(false);
-        setIsLoading(false);
-        setErrorMessage('No se pudo iniciar la reproducción. Revisa tu conexión o prueba más tarde.');
+        try {
+          audio.src = track.url;
+          audio.load();
+          await audio.play();
+        } catch {
+          setIsPlaying(false);
+          setIsLoading(false);
+          setErrorMessage(
+            'No se pudo iniciar la reproducción. Revisa tu conexión o prueba más tarde.',
+          );
+        }
       }
-    }
-  }, []);
+    },
+    [stopTv],
+  );
 
   const togglePlayback = useCallback(async () => {
     const audio = ensureAudioElement(audioRef);
 
-    if (!currentTrack) {
+    if (!currentTrack || !audio.getAttribute('src')) {
       await playTrack(liveTrack);
       return;
     }
 
     if (audio.paused) {
       try {
+        stopTv();
         setErrorMessage(null);
         setIsLoading(true);
         await audio.play();
@@ -186,7 +244,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
 
     audio.pause();
-  }, [currentTrack, playTrack]);
+  }, [currentTrack, playTrack, stopTv]);
 
   useEffect(() => {
     if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
@@ -200,13 +258,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current?.pause();
     });
     navigator.mediaSession.setActionHandler('stop', () => {
-      if (!audioRef.current) {
-        return;
-      }
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      setIsPlaying(false);
-      setIsLoading(false);
+      stopRadio();
     });
 
     return () => {
@@ -214,7 +266,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       navigator.mediaSession.setActionHandler('pause', null);
       navigator.mediaSession.setActionHandler('stop', null);
     };
-  }, [togglePlayback]);
+  }, [stopRadio, togglePlayback]);
 
   const setVolume = (nextVolume: number) => {
     const audio = ensureAudioElement(audioRef);
@@ -224,26 +276,23 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   };
 
   const stop = () => {
-    if (!audioRef.current) {
-      return;
-    }
-
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
-    setIsPlaying(false);
-    setIsLoading(false);
+    stopRadio();
   };
 
   const clearError = () => setErrorMessage(null);
 
-  const value = {
+  const value: PlayerContextValue = {
     currentTrack,
     isPlaying,
     isLoading,
+    isTvActive,
+    activeMedium,
     volume,
     errorMessage,
     playTrack,
     togglePlayback,
+    startTv,
+    stopTv,
     setVolume,
     stop,
     clearError,

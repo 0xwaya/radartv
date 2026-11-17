@@ -9,15 +9,19 @@ export function GlobalPlayer() {
     currentTrack,
     isPlaying,
     isLoading,
+    isTvActive,
     togglePlayback,
     stop,
+    stopTv,
     setVolume,
     volume,
     errorMessage,
   } = usePlayer();
 
+  const busy = isPlaying || isLoading || isTvActive;
+
   return (
-    <div className={`global-player${isPlaying || isLoading ? ' global-player--active' : ''}`}>
+    <div className={`global-player${busy ? ' global-player--active' : ''}`}>
       <div className="shell global-player__inner">
         <div className="global-player__meta">
           <span className="global-player__badge">
@@ -26,16 +30,20 @@ export function GlobalPlayer() {
           </span>
           <div>
             <p className="global-player__title">
-              {isLoading
-                ? 'Conectando radio en vivo…'
-                : (currentTrack?.title ?? 'Listo para reproducir en vivo')}
+              {isTvActive
+                ? 'TV en vivo activa'
+                : isLoading
+                  ? 'Conectando radio en vivo…'
+                  : (currentTrack?.title ?? 'Listo para reproducir en vivo')}
             </p>
             <p
               className={`global-player__subtitle${errorMessage ? ' global-player__subtitle--error' : ''}`}
             >
               {errorMessage ??
-                currentTrack?.subtitle ??
-                'Usa cualquier acción en vivo para iniciar la reproducción.'}
+                (isTvActive
+                  ? 'La radio está detenida mientras corre la TV. Usa Escuchar En Vivo para cambiar.'
+                  : (currentTrack?.subtitle ??
+                    'Usa cualquier acción en vivo para iniciar la reproducción.'))}
             </p>
           </div>
         </div>
@@ -49,7 +57,14 @@ export function GlobalPlayer() {
             {isPlaying ? <Pause size={16} /> : <Play size={16} />}
             {isLoading ? 'Conectando…' : isPlaying ? 'Pausar' : 'Reproducir'}
           </button>
-          <button className="player-button player-button--quiet" onClick={stop} type="button">
+          <button
+            className="player-button player-button--quiet"
+            onClick={() => {
+              stop();
+              stopTv();
+            }}
+            type="button"
+          >
             Detener
           </button>
           <label className="global-player__volume">
