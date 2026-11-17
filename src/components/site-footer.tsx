@@ -46,14 +46,17 @@ export function SiteFooter() {
 
             <div>
               <p className="site-footer__title">Redes</p>
-              <nav className="site-footer__links site-footer__links--row" aria-label="Redes sociales">
+              <nav className="site-footer__links" aria-label="Redes sociales">
                 {socialLinks.map((item) => (
                   <a key={item.href} href={item.href} target="_blank" rel="noreferrer">
                     {item.label}
                   </a>
                 ))}
               </nav>
-              <p className="site-footer__title site-footer__title--spaced">Apps</p>
+            </div>
+
+            <div>
+              <p className="site-footer__title">Apps</p>
               <nav className="site-footer__links" aria-label="Aplicaciones">
                 {appLinks.map((item) => (
                   <a key={item.href} href={item.href} target="_blank" rel="noreferrer">
@@ -74,17 +77,19 @@ export function SiteFooter() {
             href="https://wayalabs.com"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Built by WayaLabs"
+            aria-label="Diseñado por WayaLabs"
           >
-            <span className="wayalabs-sig__label">Built by</span>
-            <Image
-              alt=""
-              className="wayalabs-sig__mark"
-              height={28}
-              src="/images/wayalabs-mark-nav.png"
-              width={44}
-            />
-            <span className="wayalabs-sig__name">WayaLabs</span>
+            <span className="wayalabs-sig__label">Diseñado por</span>
+            <span className="wayalabs-sig__brand">
+              <Image
+                alt=""
+                className="wayalabs-sig__mark"
+                height={28}
+                src="/images/wayalabs-mark-nav.png"
+                width={44}
+              />
+              <span className="wayalabs-sig__name">WayaLabs</span>
+            </span>
           </a>
         </div>
       </div>

@@ -94,7 +94,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               fill
               priority
               sizes="(max-width: 900px) 100vw, 48vw"
-              src={deibisProfile.image}
+              src={deibisProfile.heroImage}
             />
           </div>
         </div>

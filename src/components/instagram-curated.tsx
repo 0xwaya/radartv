@@ -10,8 +10,8 @@ type InstagramCuratedProps = {
 
 export function InstagramCurated({
   eyebrow = 'Instagram',
-  title = 'Curado desde @deibisromero',
-  description = 'Selección editorial de temas que viven en el feed: actualidad, entrevistas, territorio y bastidores. Ábrelo en Instagram para el día a día.',
+  title = 'Desde @deibisromero',
+  description = 'Selección editorial del feed: estudio, terreno, Biobío y bastidores. Instagram sigue siendo el canal del día a día.',
 }: InstagramCuratedProps) {
   return (
     <section className="shell content-block ig-curated">
@@ -22,7 +22,7 @@ export function InstagramCurated({
           <p>{description}</p>
         </div>
         <a className="button button--secondary" href={instagramProfileUrl} rel="noreferrer" target="_blank">
-          Abrir Instagram
+          Seguir en Instagram
         </a>
       </div>
 
