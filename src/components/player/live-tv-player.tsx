@@ -15,6 +15,8 @@ import {
 type LiveTvPlayerProps = {
   title?: string;
   className?: string;
+  /** When true (default), mount the official embed with autoplay so a live signal shows on first paint. */
+  autoStart?: boolean;
 };
 
 function withAutoplay(url: string, autoplay: boolean) {
@@ -34,9 +36,10 @@ function withAutoplay(url: string, autoplay: boolean) {
 export function LiveTvPlayer({
   title = 'El Radar TV En Vivo',
   className = '',
+  autoStart = true,
 }: LiveTvPlayerProps) {
   const { stop: stopRadio } = usePlayer();
-  const [autoplay, setAutoplay] = useState(false);
+  const [autoplay, setAutoplay] = useState(autoStart);
   const [reloadKey, setReloadKey] = useState(0);
 
   const embedSrc = useMemo(
@@ -81,12 +84,12 @@ export function LiveTvPlayer({
           src={embedSrc}
           title={title}
         />
-        {!autoplay ? (
-          <div className="live-tv__overlay">
-            <div className="live-tv__badge">
-              <span className="live-pulse" aria-hidden="true" />
-              <span>En vivo</span>
-            </div>
+        <div className={`live-tv__overlay${autoplay ? ' live-tv__overlay--playing' : ''}`}>
+          <div className="live-tv__badge">
+            <span className="live-pulse" aria-hidden="true" />
+            <span>En vivo</span>
+          </div>
+          {!autoplay ? (
             <div className="live-tv__controls">
               <button
                 aria-label="Reproducir TV en vivo"
@@ -107,8 +110,20 @@ export function LiveTvPlayer({
                 Abrir fuente
               </a>
             </div>
-          </div>
-        ) : null}
+          ) : (
+            <div className="live-tv__controls">
+              <a
+                className="live-tv__external"
+                href={watchLiveEmbedUrl}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <ExternalLink size={15} />
+                Abrir fuente
+              </a>
+            </div>
+          )}
+        </div>
       </div>
       <div className="live-tv__meta">
         <div>
@@ -116,8 +131,7 @@ export function LiveTvPlayer({
           <h3>{title}</h3>
         </div>
         <p>
-          Señal oficial vía tvstream.cl
-          {autoplay ? '. ' : '. Toca Ver en vivo para iniciar. '}
+          Señal oficial en vivo vía tvstream.cl.{' '}
           <a className="text-link" href={watchLiveHlsUrl} rel="noreferrer" target="_blank">
             HLS directo
           </a>
