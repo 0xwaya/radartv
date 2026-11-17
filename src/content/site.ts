@@ -7,7 +7,8 @@ export type Track = {
   externalUrl?: string;
 };
 
-export const siteUrl = 'https://radartv.vercel.app';
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || 'https://radartv.vercel.app';
 
 const configuredWhatsAppNumber = (
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '56991248558'
@@ -17,7 +18,7 @@ export const youtubeStreamsUrl = 'https://www.youtube.com/@deibisromerolocutor/s
 
 export const whatsappContact = {
   number: configuredWhatsAppNumber,
-  message: 'Hola Deibis, te escribo desde el portal para consultar por una colaboracion.',
+  message: 'Hola Deibis, te escribo desde el portal para consultar por una colaboración.',
 };
 
 export const whatsappLink = configuredWhatsAppNumber
@@ -30,26 +31,41 @@ export const socialLinks = [
     href: 'https://www.instagram.com/deibisromero',
   },
   {
+    label: 'TikTok',
+    href: 'https://www.tiktok.com/@deibisromerolocutor',
+  },
+  {
     label: 'Facebook',
     href: 'https://www.facebook.com/deibis.romero.3',
   },
   {
     label: 'X',
-    href: 'https://twitter.com/deibisromero?ref_src=twsrc%5Etfw%7Ctwcamp%5Eembeddedtimeline%7Ctwterm%5Escreen-name%3Adeibisromero%7Ctwcon%5Es1_c1',
+    href: 'https://x.com/deibisromero',
   },
   {
     label: 'YouTube',
-    href: 'https://www.youtube.com/@deibisromerolocutor/featured',
+    href: 'https://www.youtube.com/@deibisromerolocutor',
+  },
+];
+
+export const appLinks = [
+  {
+    label: 'App Deibis Romero',
+    href: 'https://play.google.com/store/apps/details?id=deibisromero.lorini',
+  },
+  {
+    label: 'WikiPlay',
+    href: 'https://play.google.com/store/apps/details?id=app.wikiplayapp',
   },
 ];
 
 export const liveTrack: Track = {
   id: 'deibis-live-radio',
   title: 'El Radar Radio En Vivo',
-  subtitle: 'Musica 24/7, actualidad y la identidad en vivo de Deibis Romero',
+  subtitle: 'Música 24/7, actualidad e identidad en vivo de Deibis Romero',
   url: 'https://acp2.lorini.net:27050/stream',
   kind: 'live',
-  externalUrl: 'http://player.lorini.net/drtv',
+  externalUrl: 'https://player.lorini.net/drtv',
 };
 
 export const watchLiveUrl = 'https://video.ipstream.cl:3459/hybrid/play.m3u8';
@@ -57,115 +73,116 @@ export const watchLiveUrl = 'https://video.ipstream.cl:3459/hybrid/play.m3u8';
 export const clipTracks: Track[] = [
   {
     id: 'voice-reel',
-    title: 'Demo de Voz',
-    subtitle: 'La fuente actual es la galeria publica; faltan exportaciones directas.',
+    title: 'Demo de voz',
+    subtitle: 'Galería pública de sonidos mientras se publican archivos directos.',
     kind: 'clip',
     externalUrl: 'https://deibisromero.com/sonidos.html',
   },
   {
     id: 'station-id',
-    title: 'IDs de Estacion',
-    subtitle: 'Placeholder de presentacion basado en la galeria existente.',
+    title: 'IDs de estación',
+    subtitle: 'Identidad sonora y presentaciones disponibles en la galería actual.',
     kind: 'clip',
     externalUrl: 'https://elradartv.cl/sonidos.html',
   },
   {
     id: 'youtube-clips',
-    title: 'Clips Destacados',
-    subtitle: 'Tomados del canal de YouTube mientras se exporta la libreria propia.',
+    title: 'Clips destacados',
+    subtitle: 'Selección del canal de YouTube mientras se exporta la librería propia.',
     kind: 'clip',
-    externalUrl: 'https://www.youtube.com/@deibisromerolocutor/featured',
+    externalUrl: 'https://www.youtube.com/@deibisromerolocutor',
   },
 ];
 
 export const brandSummary = {
   headline: 'Marca personal y medio en vivo en una sola experiencia clara.',
-  body: 'Este portal prioriza En Vivo TV y Radio para audiencia en Chile, con acceso directo a contacto y contenido social sin friccion.',
+  body: 'Este portal prioriza En Vivo TV y Radio para audiencia en Chile, con acceso directo a contacto y contenido social sin fricción.',
 };
 
 export const deibisProfile = {
   name: 'Deibis Romero',
   role: 'Locutor, presentador, productor y fundador',
-  image: 'https://deibisromero.com/images/deibis.webp',
+  image: '/images/deibis-portrait.jpg',
   email: 'producciones@deibisromero.com',
-  location: 'Concepcion, Chile',
-  intro: 'Comunicador con trayectoria en radio, television y produccion digital, hoy enfocado en transmision en vivo y colaboraciones de marca.',
+  location: 'Concepción, Chile',
+  intro:
+    'Comunicador con trayectoria en radio, televisión y producción digital. Hoy transmite desde Concepción con El Radar TV y Radio, enfocado en señal en vivo, voz profesional y colaboraciones de marca.',
   stats: [
     { label: 'Enfoque', value: 'Radio + TV + Voz' },
-    { label: 'Base Actual', value: 'Chile' },
-    { label: 'Canal Principal', value: 'En Vivo + WhatsApp' },
+    { label: 'Base actual', value: 'Concepción, Chile' },
+    { label: 'Canal principal', value: 'En vivo + WhatsApp' },
   ],
 };
 
 export const bioTimeline = [
   {
-    year: 'Early career',
-    text: 'Started in community media in Antimano with announcing, production, promotions, and news narration while also supporting television production.',
+    year: 'Inicios',
+    text: 'Nace el 27 de agosto de 1984. Se inicia en la Emisora Comunitaria Senderos de Antímano 88.5 FM como locutor y productor, y colabora en Reto TV por Venezolana de Televisión.',
   },
   {
     year: '2008-2014',
-    text: 'Worked across education, acting, local radio, technical operations, and traffic reporting while strengthening voice and presentation work.',
+    text: 'Docente integral, actor con Ícaro Producciones, apoyo técnico en Tuyera 107.7 FM y productor-locutor en Vacilón 106.3 FM con reporte de tránsito. Obtiene certificado de locutor (50.482) en la Universidad Bolivariana de Venezuela.',
   },
   {
     year: '2017-2020',
-    text: 'Expanded into broader radio reporting, social impact initiatives, and digital educational content distributed across multiple platforms.',
+    text: 'Diagnóstico de autismo de alto funcionamiento lo motiva a apoyar a FundAspie y UNICEF Venezuela. Reportero de tránsito en La Máquina del Aire (Vepaco FM) y creador de “Lo Que Usted No Sabía” en redes y Pacífica 90.7 FM.',
   },
   {
     year: '2021-2022',
-    text: 'Brought El Radar to Chile, built local collaborations, and launched an online radio identity under his own name and app presence.',
+    text: 'Lleva El Radar a Radio Chévere en Chile, se radica en Concepción y colabora con Radio Vive Tu Puerto, RDO Televisión y TV8. Lanza su radio online y apps en Play Store / WikiPlay.',
   },
   {
-    year: 'Today',
-    text: 'Operates a continuous music and information stream, voice branding work, and a growing cross-platform media presence around El Radar TV and Deibis Romero.',
+    year: 'Hoy',
+    text: 'Opera señal 24/7 de música e información, cápsulas informativas, locución comercial y presencia multiplataforma alrededor de El Radar TV y Deibis Romero.',
   },
 ];
 
 export const serviceCards = [
   {
-    title: 'Voice and Presentation',
-    text: 'Commercial voice, station imaging, live presentation, and brand-safe spoken delivery for events and media partners.',
+    title: 'Voz y presentación',
+    text: 'Locución comercial, imaging de estación, conducción en vivo y entrega hablada para eventos y socios de marca.',
   },
   {
-    title: 'Broadcast Collaborations',
-    text: 'Interviews, featured segments, guest appearances, and live coverage modules across radio and digital formats.',
+    title: 'Colaboraciones en vivo',
+    text: 'Entrevistas, segmentos destacados, apariciones invitadas y cobertura en radio y formatos digitales.',
   },
   {
-    title: 'Brand Partnerships',
-    text: 'Campaigns and sponsored integrations designed around trusted on-air identity and community reach.',
+    title: 'Alianzas de marca',
+    text: 'Campañas e integraciones patrocinadas alrededor de una identidad al aire confiable y cercana a la comunidad.',
   },
 ];
 
 export const radarProgramming = [
   {
-    title: 'Live Stream',
-    text: 'Always-on radio experience with music flow, personality, and direct audience familiarity.',
+    title: 'Señal en vivo',
+    text: 'Experiencia radial continua con flujo musical, personalidad y cercanía directa con la audiencia.',
   },
   {
-    title: 'Interview Format',
-    text: 'Expandable slot for artist conversations, cultural coverage, and local media storytelling.',
+    title: 'Formato entrevista',
+    text: 'Espacio para conversaciones con artistas, cobertura cultural y relatos locales.',
   },
   {
-    title: 'Clip Publishing',
-    text: 'Reusable short-form content for reels, site updates, and channel distribution after launch.',
+    title: 'Publicación de clips',
+    text: 'Contenido corto reutilizable para reels, actualizaciones del sitio y distribución en canales.',
   },
 ];
 
 export const ctaBlocks = {
   booking: {
-    title: 'Reserva a Deibis para locucion, conduccion o colaboraciones',
+    title: 'Reserva a Deibis para locución, conducción o colaboraciones',
     body: 'Canal directo para consultas comerciales, eventos y alianzas.',
     href: 'mailto:producciones@deibisromero.com?subject=Consulta%20Comercial',
-    label: 'Enviar Consulta',
+    label: 'Enviar consulta',
   },
   epk: {
     title: 'Abrir experiencia EPK digital',
-    body: 'Presentacion de prensa y activos de marca en formato simple para enviar rapido.',
+    body: 'Presentación de prensa y activos de marca en formato simple para compartir rápido.',
     href: '/epk',
     label: 'Ver EPK',
   },
   stream: {
     title: 'Acceso en vivo como prioridad del portal',
-    body: 'TV y radio en un toque, especialmente para trafico movil en Chile.',
+    body: 'TV y radio en un toque, especialmente para tráfico móvil en Chile.',
     href: watchLiveUrl,
     label: 'Ver TV En Vivo',
   },

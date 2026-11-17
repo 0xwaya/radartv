@@ -56,14 +56,20 @@ export function SiteHeader() {
           </span>
         </Link>
         <button
-          aria-label={currentLang === 'es' ? 'Abrir menu' : 'Open menu'}
+          aria-controls="site-primary-nav"
+          aria-expanded={isOpen}
+          aria-label={currentLang === 'es' ? 'Abrir menú' : 'Open menu'}
           className="site-header__menu-button"
           onClick={() => setIsOpen((value) => !value)}
           type="button"
         >
           {isOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
-        <nav className={`site-header__nav ${isOpen ? 'site-header__nav--open' : ''}`} aria-label="Navegacion principal">
+        <nav
+          id="site-primary-nav"
+          className={`site-header__nav ${isOpen ? 'site-header__nav--open' : ''}`}
+          aria-label={currentLang === 'es' ? 'Navegación principal' : 'Primary navigation'}
+        >
           {navItems.map((item) => (
             <Link key={item.href} href={withLang(item.href, currentLang)} onClick={() => setIsOpen(false)}>
               {item.label}

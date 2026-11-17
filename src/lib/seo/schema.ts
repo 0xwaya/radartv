@@ -1,4 +1,10 @@
-import { deibisProfile, siteUrl } from '@/content/site';
+import { deibisProfile, siteUrl, socialLinks } from '@/content/site';
+
+const sameAs = [
+  ...socialLinks.map((item) => item.href),
+  'https://elradartv.cl',
+  'https://deibisromero.com',
+];
 
 export function buildPersonSchema() {
   return {
@@ -7,15 +13,14 @@ export function buildPersonSchema() {
     name: deibisProfile.name,
     jobTitle: deibisProfile.role,
     email: deibisProfile.email,
-    image: deibisProfile.image,
+    image: `${siteUrl}${deibisProfile.image}`,
     url: `${siteUrl}/deibisromero`,
-    sameAs: [
-      'https://www.instagram.com/deibisromero',
-      'https://www.facebook.com/deibis.romero.3',
-      'https://www.youtube.com/@deibisromerolocutor/featured',
-      'https://elradartv.cl',
-      'https://deibisromero.com',
-    ],
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Concepción',
+      addressCountry: 'CL',
+    },
+    sameAs,
   };
 }
 
@@ -25,13 +30,8 @@ export function buildOrganizationSchema() {
     '@type': 'Organization',
     name: 'El Radar TV',
     url: `${siteUrl}/elradartv`,
-    logo: 'https://elradartv.cl/images/logo.webp',
-    sameAs: [
-      'https://elradartv.cl',
-      'https://deibisromero.com',
-      'https://www.instagram.com/deibisromero',
-      'https://www.youtube.com/@deibisromerolocutor/featured',
-    ],
+    logo: `${siteUrl}/images/logo.webp`,
+    sameAs,
   };
 }
 
@@ -39,9 +39,9 @@ export function buildBroadcastSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'BroadcastEvent',
-    name: 'El Radar Radio Live',
+    name: 'El Radar Radio En Vivo',
     isLiveBroadcast: true,
-    startDate: '2022-03-01T00:00:00-04:00',
+    startDate: new Date().toISOString(),
     url: `${siteUrl}/elradartv`,
     publishedOn: {
       '@type': 'BroadcastService',

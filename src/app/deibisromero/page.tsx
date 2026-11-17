@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { PlayerLaunchButton } from '@/components/player/player-launch-button';
 import { SectionHeading } from '@/components/section-heading';
 import {
+  appLinks,
   bioTimeline,
   clipTracks,
   ctaBlocks,
@@ -16,9 +17,9 @@ import {
 import { buildPersonSchema } from '@/lib/seo/schema';
 
 export const metadata: Metadata = {
-  title: 'Deibis Romero | Personal Brand Prototype',
+  title: 'Deibis Romero | Locutor y Presentador',
   description:
-    'Premium presentation page for Deibis Romero with biography, services, live audio access, and EPK flow.',
+    'Perfil oficial de Deibis Romero en Chile: biografía, servicios de locución, señal en vivo y kit de prensa.',
   alternates: {
     canonical: `${siteUrl}/deibisromero`,
   },
@@ -29,7 +30,7 @@ export default function DeibisRomeroPage() {
     <>
       <section className="hero shell hero--compact">
         <div className="hero__content">
-          <span className="hero__eyebrow">Professional Hub</span>
+          <span className="hero__eyebrow">Perfil profesional</span>
           <h1>{deibisProfile.name}</h1>
           <p className="hero__subhead">{deibisProfile.role}</p>
           <p>{deibisProfile.intro}</p>
@@ -51,19 +52,25 @@ export default function DeibisRomeroPage() {
           </div>
         </div>
         <div className="hero__visual card card--feature">
-          <Image alt={deibisProfile.name} height={600} src={deibisProfile.image} width={600} />
+          <Image
+            alt={deibisProfile.name}
+            height={600}
+            priority
+            src={deibisProfile.image}
+            width={600}
+          />
         </div>
       </section>
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="Live identity"
-          title="The personal brand still benefits from immediate media proof."
-          description="The prototype keeps live audio one click away so the credibility page never feels static or disconnected from the real audience experience."
+          eyebrow="Identidad en vivo"
+          title="La marca personal se respalda con la señal al aire."
+          description="Escucha El Radar Radio desde esta misma página para conectar el perfil profesional con la experiencia real de audiencia."
         />
         <div className="cta-panel card card--feature">
           <div>
-            <p className="kicker">Now streaming</p>
+            <p className="kicker">Ahora al aire</p>
             <h3>{liveTrack.title}</h3>
             <p>{liveTrack.subtitle}</p>
           </div>
@@ -73,9 +80,9 @@ export default function DeibisRomeroPage() {
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="Service surface"
-          title="This page should convert professional interest into a booking conversation."
-          description="The build reframes the biography into a premium offer instead of leaving it as a long unstructured wall of text."
+          eyebrow="Servicios"
+          title="De la consulta al booking, con claridad."
+          description="Ofertas pensadas para productoras, marcas y medios que buscan voz, conducción o colaboración."
         />
         <div className="three-up">
           {serviceCards.map((item) => (
@@ -90,9 +97,9 @@ export default function DeibisRomeroPage() {
       <section className="shell content-block two-column">
         <div>
           <SectionHeading
-            eyebrow="Biography"
-            title="A career arc that builds authority"
-            description="Drawn from the current live site, condensed into milestones that are easier to scan in a presentation or by a potential partner."
+            eyebrow="Biografía"
+            title="Una trayectoria que construye autoridad"
+            description="Resumen a partir de deibisromero.com/quien-soy, organizado en hitos fáciles de escanear."
           />
           <div className="timeline">
             {bioTimeline.map((item) => (
@@ -105,14 +112,14 @@ export default function DeibisRomeroPage() {
         </div>
         <div>
           <SectionHeading
-            eyebrow="Voice samples"
-            title="Clip export is still pending from the source sites"
-            description="The current sounds pages expose gallery surfaces but not direct downloadable preview files. The prototype makes that constraint explicit while still surfacing the content pathways."
+            eyebrow="Muestras de voz"
+            title="Acceso a demos mientras se publica la librería propia"
+            description="Las galerías actuales no exponen archivos descargables directos; aquí quedan los caminos oficiales a sonidos y clips."
           />
           <div className="stack">
             {clipTracks.map((track) => (
               <article key={track.id} className="card">
-                <p className="kicker">Clip pathway</p>
+                <p className="kicker">Muestra</p>
                 <h3>{track.title}</h3>
                 <p>{track.subtitle}</p>
                 <PlayerLaunchButton track={track} variant="secondary" />
@@ -125,7 +132,7 @@ export default function DeibisRomeroPage() {
       <section className="shell content-block">
         <div className="cta-panel card card--feature">
           <div>
-            <p className="kicker">Digital press kit</p>
+            <p className="kicker">Kit de prensa</p>
             <h3>{ctaBlocks.epk.title}</h3>
             <p>{ctaBlocks.epk.body}</p>
           </div>
@@ -136,8 +143,18 @@ export default function DeibisRomeroPage() {
       </section>
 
       <section className="shell content-block">
+        <SectionHeading
+          eyebrow="Presencia"
+          title="Redes y aplicaciones oficiales"
+          description="Canales activos para contenido, lives y la app de radio."
+        />
         <div className="social-strip card">
           {socialLinks.map((item) => (
+            <a key={item.href} href={item.href} rel="noreferrer" target="_blank">
+              {item.label}
+            </a>
+          ))}
+          {appLinks.map((item) => (
             <a key={item.href} href={item.href} rel="noreferrer" target="_blank">
               {item.label}
             </a>

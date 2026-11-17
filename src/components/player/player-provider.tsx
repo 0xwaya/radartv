@@ -15,10 +15,12 @@ type PlayerContextValue = {
   currentTrack: Track | null;
   isPlaying: boolean;
   volume: number;
+  errorMessage: string | null;
   playTrack: (track: Track) => Promise<void>;
   togglePlayback: () => Promise<void>;
   setVolume: (volume: number) => void;
   stop: () => void;
+  clearError: () => void;
 };
 
 const PlayerContext = createContext<PlayerContextValue | null>(null);
@@ -28,6 +30,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(0.72);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const audio = new Audio();
@@ -45,19 +48,28 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       audio.volume = 0.72;
     }
 
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setErrorMessage(null);
+    };
     const handlePause = () => setIsPlaying(false);
     const handleEnded = () => setIsPlaying(false);
+    const handleError = () => {
+      setIsPlaying(false);
+      setErrorMessage('No se pudo reproducir la señal. Inténtalo de nuevo en unos segundos.');
+    };
 
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
 
     return () => {
       audio.pause();
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
       audioRef.current = null;
     };
   }, []);
@@ -70,12 +82,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (audioRef.current.src !== track.url) {
-      audioRef.current.src = track.url;
-    }
+    try {
+      if (audioRef.current.src !== track.url) {
+        audioRef.current.src = track.url;
+      }
 
-    setCurrentTrack(track);
-    await audioRef.current.play();
+      setCurrentTrack(track);
+      setErrorMessage(null);
+      await audioRef.current.play();
+    } catch {
+      setIsPlaying(false);
+      setErrorMessage('No se pudo iniciar la reproducción. Revisa tu conexión o prueba más tarde.');
+    }
   };
 
   const togglePlayback = async () => {
@@ -89,7 +107,13 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
 
     if (audioRef.current.paused) {
-      await audioRef.current.play();
+      try {
+        setErrorMessage(null);
+        await audioRef.current.play();
+      } catch {
+        setIsPlaying(false);
+        setErrorMessage('No se pudo reanudar la señal en vivo.');
+      }
       return;
     }
 
@@ -116,7 +140,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setIsPlaying(false);
   };
 
-  const value = { currentTrack, isPlaying, volume, playTrack, togglePlayback, setVolume, stop };
+  const clearError = () => setErrorMessage(null);
+
+  const value = {
+    currentTrack,
+    isPlaying,
+    volume,
+    errorMessage,
+    playTrack,
+    togglePlayback,
+    setVolume,
+    stop,
+    clearError,
+  };
 
   return <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>;
 }

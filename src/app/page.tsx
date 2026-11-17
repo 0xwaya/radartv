@@ -37,26 +37,27 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     profileBtn: lang === 'es' ? 'Perfil de Deibis' : 'Deibis Profile',
     mediaBtn: 'El Radar TV',
     heroKicker: lang === 'es' ? 'En vivo primero' : 'Live first',
-    heroSub: lang === 'es' ? 'Acceso rapido para escuchar y ver.' : 'Quick access to watch and listen.',
+    heroSub: lang === 'es' ? 'Acceso rápido para escuchar y ver.' : 'Quick access to watch and listen.',
     heroDesc:
       lang === 'es'
-        ? 'Interfaz simplificada para priorizar reproduccion en directo y contacto inmediato.'
+        ? 'Interfaz simplificada para priorizar reproducción en directo y contacto inmediato.'
         : 'Simplified interface focused on live playback and instant contact.',
     radioCardDesc:
       lang === 'es'
-        ? 'Escucha la senal principal 24/7 con el reproductor integrado.'
+        ? 'Escucha la señal principal 24/7 con el reproductor integrado.'
         : 'Listen to the main 24/7 feed with the integrated player.',
     tvCardDesc:
       lang === 'es'
-        ? 'Abre la transmision de video en directo en un toque.'
+        ? 'Abre la transmisión de video en directo en un toque.'
         : 'Open the live video feed in one tap.',
+    watchTv: lang === 'es' ? 'Ver TV En Vivo' : 'Watch Live TV',
     contactCardTitle: lang === 'es' ? 'Habla con Deibis' : 'Talk to Deibis',
     contactCardDesc:
       lang === 'es'
         ? 'Consulta por WhatsApp para colaboraciones, entrevistas o contrataciones.'
         : 'Reach out by WhatsApp for collaborations, interviews, or bookings.',
     openWhatsapp: lang === 'es' ? 'Abrir WhatsApp' : 'Open WhatsApp',
-    contactSectionEyebrow: lang === 'es' ? 'Contacto rapido' : 'Quick Contact',
+    contactSectionEyebrow: lang === 'es' ? 'Contacto rápido' : 'Quick Contact',
     contactSectionTitle:
       lang === 'es' ? '¿Quieres hablar con Deibis ahora?' : 'Want to talk to Deibis right now?',
     contactSectionDesc:
@@ -76,9 +77,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         : 'Featured streams dashboard',
     streamsDesc:
       lang === 'es'
-        ? 'Ultimos directos y emisiones del canal oficial de Deibis en YouTube.'
+        ? 'Últimos directos y emisiones del canal oficial de Deibis en YouTube.'
         : 'Latest broadcasts from Deibis official YouTube channel.',
-    openStream: lang === 'es' ? 'Abrir Stream' : 'Open Stream',
+    openStream: lang === 'es' ? 'Abrir stream' : 'Open Stream',
     openStreamsGallery:
       lang === 'es' ? 'Ver todos los streams' : 'View full stream gallery',
     socialEyebrow: lang === 'es' ? 'Redes' : 'Social',
@@ -139,7 +140,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <h3>El Radar TV En Vivo</h3>
           <p>{t.tvCardDesc}</p>
           <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
-            Ver TV En Vivo
+            {t.watchTv}
           </a>
         </article>
         <article className="card card--brand">

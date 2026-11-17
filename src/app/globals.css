@@ -737,6 +737,10 @@ main {
   margin: 0.2rem 0 0;
 }
 
+.global-player__subtitle--error {
+  color: var(--rose);
+}
+
 .global-player__volume {
   display: inline-flex;
   align-items: center;

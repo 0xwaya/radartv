@@ -26,11 +26,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'El Radar TV | Portal Oficial',
   description:
-    'Portal oficial de Deibis Romero en Chile, priorizando TV y radio en vivo con contacto rapido.',
+    'Portal oficial de Deibis Romero en Chile: TV y radio en vivo, perfil profesional y contacto rápido.',
   openGraph: {
     title: 'El Radar TV | Portal Oficial',
     description:
-      'Portal oficial de Deibis Romero en Chile, priorizando TV y radio en vivo con contacto rapido.',
+      'Portal oficial de Deibis Romero en Chile: TV y radio en vivo, perfil profesional y contacto rápido.',
     url: siteUrl,
     siteName: 'El Radar TV',
     locale: 'es_CL',
@@ -49,7 +49,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'El Radar TV | Portal Oficial',
     description:
-      'Portal oficial de Deibis Romero en Chile, priorizando TV y radio en vivo con contacto rapido.',
+      'Portal oficial de Deibis Romero en Chile: TV y radio en vivo, perfil profesional y contacto rápido.',
+    images: ['/og-radar.png'],
   },
 };
 
