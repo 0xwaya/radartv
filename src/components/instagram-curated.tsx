@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
 import { instagramHighlights, instagramProfileUrl } from '@/content/site';
+import { externalAnchorProps } from '@/lib/external-href';
 
 type InstagramCuratedProps = {
   eyebrow?: string;
@@ -13,6 +14,8 @@ export function InstagramCurated({
   title = 'Desde @deibisromero',
   description = 'Selección editorial del feed: estudio, terreno, Biobío y bastidores. Instagram sigue siendo el canal del día a día.',
 }: InstagramCuratedProps) {
+  const profileLink = externalAnchorProps(instagramProfileUrl);
+
   return (
     <section className="shell content-block ig-curated">
       <div className="ig-curated__header">
@@ -21,7 +24,7 @@ export function InstagramCurated({
           <h2>{title}</h2>
           <p>{description}</p>
         </div>
-        <a className="button button--secondary" href={instagramProfileUrl} rel="noreferrer" target="_blank">
+        <a className="button button--secondary" {...profileLink}>
           Seguir en Instagram
         </a>
       </div>
@@ -31,9 +34,7 @@ export function InstagramCurated({
           <a
             key={item.id}
             className={`ig-tile${index === 0 ? ' ig-tile--feature' : ''}`}
-            href={item.href}
-            rel="noreferrer"
-            target="_blank"
+            {...externalAnchorProps(item.href)}
           >
             <div className="ig-tile__media">
               <Image

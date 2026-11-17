@@ -25,10 +25,13 @@ export const whatsappLink = configuredWhatsAppNumber
   ? `https://wa.me/${configuredWhatsAppNumber}?text=${encodeURIComponent(whatsappContact.message)}`
   : `mailto:producciones@deibisromero.com?subject=${encodeURIComponent('Contacto desde portal')}`;
 
+/** Canonical web profile (trailing slash). Avoids app-scheme redirects that Opera rejects as “invalid address”. */
+export const instagramProfileUrl = 'https://www.instagram.com/deibisromero/';
+
 export const socialLinks = [
   {
     label: 'Instagram',
-    href: 'https://www.instagram.com/deibisromero',
+    href: instagramProfileUrl,
   },
   {
     label: 'TikTok',
@@ -58,8 +61,6 @@ export const appLinks = [
     href: 'https://play.google.com/store/apps/details?id=app.wikiplayapp',
   },
 ];
-
-export const instagramProfileUrl = 'https://www.instagram.com/deibisromero';
 
 /** Curated highlights aligned with @deibisromero themes (IG is login-walled; visuals cached locally). */
 export const instagramHighlights = [

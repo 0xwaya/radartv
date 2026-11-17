@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { appLinks, deibisProfile, instagramProfileUrl, socialLinks, whatsappLink } from '@/content/site';
+import { externalAnchorProps } from '@/lib/external-href';
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -16,7 +17,7 @@ export function SiteFooter() {
               Portal oficial de Deibis Romero en Chile: TV y radio en vivo, perfil profesional y
               contacto directo.
             </p>
-            <a className="site-footer__ig" href={instagramProfileUrl} rel="noreferrer" target="_blank">
+            <a className="site-footer__ig" {...externalAnchorProps(instagramProfileUrl)}>
               @deibisromero
             </a>
           </div>
@@ -36,7 +37,7 @@ export function SiteFooter() {
             <div>
               <p className="site-footer__title">Contacto</p>
               <nav className="site-footer__links" aria-label="Contacto">
-                <a href={whatsappLink} rel="noreferrer" target="_blank">
+                <a href={whatsappLink} rel="noopener noreferrer" target="_blank">
                   WhatsApp
                 </a>
                 <a href={`mailto:${deibisProfile.email}`}>{deibisProfile.email}</a>
@@ -48,7 +49,7 @@ export function SiteFooter() {
               <p className="site-footer__title">Redes</p>
               <nav className="site-footer__links" aria-label="Redes sociales">
                 {socialLinks.map((item) => (
-                  <a key={item.href} href={item.href} target="_blank" rel="noreferrer">
+                  <a key={item.href} {...externalAnchorProps(item.href)}>
                     {item.label}
                   </a>
                 ))}
@@ -59,7 +60,7 @@ export function SiteFooter() {
               <p className="site-footer__title">Apps</p>
               <nav className="site-footer__links" aria-label="Aplicaciones">
                 {appLinks.map((item) => (
-                  <a key={item.href} href={item.href} target="_blank" rel="noreferrer">
+                  <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer">
                     {item.label}
                   </a>
                 ))}

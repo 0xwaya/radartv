@@ -14,6 +14,7 @@ import {
   whatsappLink,
   youtubeStreamsUrl,
 } from '@/content/site';
+import { externalAnchorProps } from '@/lib/external-href';
 import { buildOrganizationSchema, buildPersonSchema } from '@/lib/seo/schema';
 import { getTopStreams } from '@/lib/youtube-streams';
 
@@ -221,7 +222,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <p className="finale-panel__hint">{t.socialDesc}</p>
             <div className="social-strip social-strip--bare">
               {socialLinks.map((item) => (
-                <a key={item.href} href={item.href} rel="noreferrer" target="_blank">
+                <a key={item.href} {...externalAnchorProps(item.href)}>
                   {item.label}
                 </a>
               ))}
