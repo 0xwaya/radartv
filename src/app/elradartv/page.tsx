@@ -17,9 +17,9 @@ import {
 import { buildBroadcastSchema, buildOrganizationSchema } from '@/lib/seo/schema';
 
 export const metadata: Metadata = {
-  title: 'El Radar TV | Media Brand Prototype',
+  title: 'El Radar TV | En Vivo',
   description:
-    'Energetic media experience for El Radar TV with live stream access, clip surfaces, and content-first calls to action.',
+    'El Radar TV y Radio en vivo: escucha la señal, abre la transmisión de video y sigue clips y programación.',
   alternates: {
     canonical: `${siteUrl}/elradartv`,
   },
@@ -30,40 +30,46 @@ export default function ElRadarTvPage() {
     <>
       <section className="hero shell hero--compact">
         <div className="hero__content">
-          <span className="hero__eyebrow">Media Brand</span>
+          <span className="hero__eyebrow">Medio en vivo</span>
           <h1>El Radar TV</h1>
-          <p className="hero__subhead">Dynamic, real-time, and built around immediate access.</p>
+          <p className="hero__subhead">Dinámico, en tiempo real y pensado para acceso inmediato.</p>
           <p>
-            The upgraded media side leads with live audio, watch-live entry points, reusable clip
-            surfaces, and room for show programming, interviews, and community features.
+            La experiencia de medio lidera con audio en vivo, entrada a TV, superficie de clips y
+            espacio para programación, entrevistas y comunidad.
           </p>
           <div className="hero__actions">
             <PlayerLaunchButton track={liveTrack} />
             <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
-              Watch Live
+              Ver TV En Vivo
             </a>
           </div>
         </div>
         <div className="hero__visual card card--feature card--glow">
           <RadarVector className="hero__radar hero__radar--media" />
-          <Image alt="El Radar TV presentation art" height={600} src={deibisProfile.image} width={600} />
+          <Image
+            alt="Deibis Romero — El Radar TV"
+            height={600}
+            priority
+            src={deibisProfile.image}
+            width={600}
+          />
           <div className="hero__visual-copy">
-            <p className="kicker">Always visible action</p>
-            <h2>Listen live, watch live, or move straight into clips.</h2>
+            <p className="kicker">Acción siempre visible</p>
+            <h2>Escucha en vivo, mira TV o pasa directo a los clips.</h2>
           </div>
         </div>
       </section>
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="Programming grid"
-          title="The content engine needs structure, not just links."
-          description="The prototype sets up reusable cards that later map directly to a CMS-backed publishing model."
+          eyebrow="Programación"
+          title="El motor de contenido necesita estructura, no solo enlaces."
+          description="Tarjetas reutilizables listas para mapear a un CMS cuando la publicación se active."
         />
         <div className="three-up">
           {radarProgramming.map((item) => (
             <article key={item.title} className="card card--accent-soft">
-              <p className="kicker">Format</p>
+              <p className="kicker">Formato</p>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
             </article>
@@ -74,22 +80,27 @@ export default function ElRadarTvPage() {
       <section className="shell content-block two-column">
         <div>
           <SectionHeading
-            eyebrow="Player strategy"
-            title="Global playback stays mounted across route changes"
-            description="For the day-one build, the audio stream uses the current public MP3 endpoint while video stays available as a direct watch-live action."
+            eyebrow="Reproductor"
+            title="La reproducción global se mantiene entre páginas"
+            description="La señal de radio usa el stream MP3 público; el video HLS queda como acción directa de ver en vivo."
           />
           <div className="stack">
             <article className="card">
-              <p className="kicker">Live audio</p>
+              <p className="kicker">Audio en vivo</p>
               <h3>{liveTrack.title}</h3>
               <p>{liveTrack.subtitle}</p>
               <PlayerLaunchButton track={liveTrack} variant="secondary" />
             </article>
             <article className="card">
-              <p className="kicker">Watch live</p>
-              <h3>Video stream endpoint</h3>
-              <p>The current site points to an HLS player URL. The prototype exposes it as a stable direct action.</p>
-              <a className="button button--secondary" href={ctaBlocks.stream.href} rel="noreferrer" target="_blank">
+              <p className="kicker">TV en vivo</p>
+              <h3>Señal de video</h3>
+              <p>Abre la transmisión HLS de El Radar TV en un toque.</p>
+              <a
+                className="button button--secondary"
+                href={ctaBlocks.stream.href}
+                rel="noreferrer"
+                target="_blank"
+              >
                 {ctaBlocks.stream.label}
               </a>
             </article>
@@ -97,14 +108,14 @@ export default function ElRadarTvPage() {
         </div>
         <div>
           <SectionHeading
-            eyebrow="Clip grid"
-            title="The soundboard MVP is content-aware about current source limitations"
-            description="Direct clip exports are not available from the legacy pages, so this prototype exposes the existing galleries and channel surfaces without pretending the files already exist."
+            eyebrow="Clips"
+            title="Galería honesta mientras se exportan demos propios"
+            description="Sin fingir archivos que aún no existen: enlaces a galerías y canal oficiales."
           />
           <div className="stack">
             {clipTracks.map((track) => (
               <article key={track.id} className="card">
-                <p className="kicker">Clip module</p>
+                <p className="kicker">Clip</p>
                 <h3>{track.title}</h3>
                 <p>{track.subtitle}</p>
                 <PlayerLaunchButton track={track} variant="secondary" />
@@ -117,11 +128,11 @@ export default function ElRadarTvPage() {
       <section className="shell content-block">
         <div className="cta-panel card card--feature">
           <div>
-            <p className="kicker">Community roadmap</p>
-            <h3>Phase two adds moderated social, polls, and programming momentum.</h3>
+            <p className="kicker">Comunidad</p>
+            <h3>Sigue la señal en redes mientras crece la capa social del portal.</h3>
             <p>
-              This build keeps the media experience focused and credible for the presentation while
-              leaving clear space for a community layer after approval.
+              Instagram, TikTok, YouTube y el resto de canales oficiales concentran clips, lives y
+              anuncios del día a día.
             </p>
           </div>
           <div className="social-strip social-strip--compact">
@@ -135,7 +146,9 @@ export default function ElRadarTvPage() {
       </section>
 
       <script
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([buildOrganizationSchema(), buildBroadcastSchema()]) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([buildOrganizationSchema(), buildBroadcastSchema()]),
+        }}
         type="application/ld+json"
       />
     </>

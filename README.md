@@ -1,44 +1,45 @@
-# RadarTV Prototype
+# RadarTV
 
-Presentation-ready Next.js prototype that unifies the Deibis Romero personal brand with the El Radar TV media identity.
+Portal oficial Next.js que unifica la marca personal de Deibis Romero con El Radar TV / Radio.
 
-## What is included
+## Qué incluye
 
-- A shared landing page that explains the unified brand strategy
-- A premium Deibis Romero experience focused on biography, services, booking, and EPK flow
-- An El Radar TV experience focused on live access, programming structure, and clip surfaces
-- A persistent global player wired to the currently exposed public live audio stream
-- SEO baseline with metadata, structured data, robots, and sitemap
+- Landing en vivo primero (TV + radio + WhatsApp)
+- Perfil profesional con biografía, servicios y EPK
+- Experiencia El Radar TV con acceso a señal y clips
+- Reproductor global de audio con manejo de errores
+- SEO base: metadata, structured data, robots y sitemap
 
 ## Tech
 
 - Next.js App Router
 - TypeScript
-- Local content seed files for fast iteration
+- Contenido en `src/content/site.ts`
 
-## Run locally
+## Configuración
+
+Copia `.env.example` a `.env.local`:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://radartv.vercel.app
+NEXT_PUBLIC_WHATSAPP_NUMBER=569XXXXXXXX
+```
+
+## Desarrollo
 
 ```bash
 npm install
 npm run dev
 ```
 
-## WhatsApp quick setup
-
-Set the public WhatsApp number in Chilean format to enable direct chat in the widget:
-
-```bash
-NEXT_PUBLIC_WHATSAPP_NUMBER=569XXXXXXXX
-```
-
-## Production validation
+## Producción
 
 ```bash
 npm run build
 ```
 
-## Notes
+## Notas
 
-- The live audio player uses the current public MP3 stream exposed by the existing Deibis site.
-- The current sound gallery pages do not expose direct clip files, so the clip grid links back to the legacy gallery and YouTube surfaces until exportable assets are available.
-- This is intentionally a one-day presentation build, not the full CMS and dual-domain production architecture.
+- El audio en vivo usa el stream MP3 público de Lorini.
+- La TV HLS aún se abre como acción externa; el player embebido es fase B.
+- Los demos de voz siguen enlazando a las galerías legacy hasta exportar archivos propios.

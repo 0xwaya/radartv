@@ -5,7 +5,8 @@ import { Pause, Play, Radio, Volume2 } from 'lucide-react';
 import { usePlayer } from '@/components/player/player-provider';
 
 export function GlobalPlayer() {
-  const { currentTrack, isPlaying, togglePlayback, stop, setVolume, volume } = usePlayer();
+  const { currentTrack, isPlaying, togglePlayback, stop, setVolume, volume, errorMessage } =
+    usePlayer();
 
   return (
     <div className="global-player">
@@ -13,12 +14,16 @@ export function GlobalPlayer() {
         <div className="global-player__meta">
           <span className="global-player__badge">
             <Radio size={14} />
-            Reproductor Permanente
+            Reproductor permanente
           </span>
           <div>
             <p className="global-player__title">{currentTrack?.title ?? 'Listo para reproducir en vivo'}</p>
-            <p className="global-player__subtitle">
-              {currentTrack?.subtitle ?? 'Usa cualquier accion en vivo para iniciar la reproduccion.'}
+            <p
+              className={`global-player__subtitle${errorMessage ? ' global-player__subtitle--error' : ''}`}
+            >
+              {errorMessage ??
+                currentTrack?.subtitle ??
+                'Usa cualquier acción en vivo para iniciar la reproducción.'}
             </p>
           </div>
         </div>

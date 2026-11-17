@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { socialLinks } from '@/content/site';
+import { appLinks, socialLinks } from '@/content/site';
 
 export function SiteFooter() {
   return (
@@ -8,7 +8,9 @@ export function SiteFooter() {
       <div className="shell site-footer__grid">
         <div>
           <p className="site-footer__title">Portal oficial para Chile</p>
-          <p className="site-footer__desc">TV y radio en vivo con acceso directo a contacto, colaboraciones y canales sociales.</p>
+          <p className="site-footer__desc">
+            TV y radio en vivo con acceso directo a contacto, colaboraciones y canales sociales.
+          </p>
         </div>
         <div>
           <p className="site-footer__title">Navegación</p>
@@ -23,6 +25,11 @@ export function SiteFooter() {
           <p className="site-footer__title">Redes</p>
           <nav className="site-footer__links" aria-label="Redes sociales">
             {socialLinks.map((item) => (
+              <a key={item.href} href={item.href} target="_blank" rel="noreferrer">
+                {item.label}
+              </a>
+            ))}
+            {appLinks.map((item) => (
               <a key={item.href} href={item.href} target="_blank" rel="noreferrer">
                 {item.label}
               </a>
