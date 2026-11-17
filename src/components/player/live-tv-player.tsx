@@ -1,128 +1,40 @@
 'use client';
 
-import { ExternalLink, Play } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { Play } from 'lucide-react';
 
-import { usePlayer } from '@/components/player/player-provider';
 import { watchLiveEmbedUrl, watchLiveHlsUrl } from '@/content/site';
-import {
-  LIVE_RADIO_PLAY_EVENT,
-  LIVE_TV_PAUSE_EVENT,
-  LIVE_TV_PLAY_EVENT,
-  requestLiveTvPlay,
-} from '@/lib/live-media-events';
+import { requestLiveTvPlay } from '@/lib/live-media-events';
 
 type LiveTvPlayerProps = {
   title?: string;
   className?: string;
-  /** When true (default), mount the official embed with autoplay so a live signal shows on first paint. */
-  autoStart?: boolean;
 };
 
-function withAutoplay(url: string, autoplay: boolean) {
-  try {
-    const next = new URL(url);
-    if (autoplay) {
-      next.searchParams.set('autoplay', '1');
-    } else {
-      next.searchParams.delete('autoplay');
-    }
-    return next.toString();
-  } catch {
-    return url;
-  }
-}
-
+/**
+ * Official tvstream embed. Keep the iframe stable — remounting/pausing it from
+ * radio events was causing glitchy reloads while a live signal is on air.
+ */
 export function LiveTvPlayer({
   title = 'El Radar TV En Vivo',
   className = '',
-  autoStart = true,
 }: LiveTvPlayerProps) {
-  const { stop: stopRadio } = usePlayer();
-  const [autoplay, setAutoplay] = useState(autoStart);
-  const [reloadKey, setReloadKey] = useState(0);
-
-  const embedSrc = useMemo(
-    () => withAutoplay(watchLiveEmbedUrl, autoplay),
-    [autoplay],
-  );
-
-  useEffect(() => {
-    const onPlayRequest = () => {
-      stopRadio();
-      setAutoplay(true);
-      // Remount iframe so tvstream honors autoplay after a user gesture.
-      setReloadKey((value) => value + 1);
-    };
-
-    const onPauseRequest = () => {
-      setAutoplay(false);
-      setReloadKey((value) => value + 1);
-    };
-
-    window.addEventListener(LIVE_TV_PLAY_EVENT, onPlayRequest);
-    window.addEventListener(LIVE_TV_PAUSE_EVENT, onPauseRequest);
-    window.addEventListener(LIVE_RADIO_PLAY_EVENT, onPauseRequest);
-
-    return () => {
-      window.removeEventListener(LIVE_TV_PLAY_EVENT, onPlayRequest);
-      window.removeEventListener(LIVE_TV_PAUSE_EVENT, onPauseRequest);
-      window.removeEventListener(LIVE_RADIO_PLAY_EVENT, onPauseRequest);
-    };
-  }, [stopRadio]);
-
   return (
     <div className={`live-tv ${className}`.trim()} id="tv-en-vivo">
       <div className="live-tv__frame live-tv__frame--embed">
         <iframe
-          key={reloadKey}
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
           className="live-tv__iframe"
           referrerPolicy="origin"
           scrolling="no"
-          src={embedSrc}
+          src={watchLiveEmbedUrl}
           title={title}
         />
-        <div className={`live-tv__overlay${autoplay ? ' live-tv__overlay--playing' : ''}`}>
-          <div className="live-tv__badge">
+        <div className="live-tv__chrome" aria-hidden="true">
+          <span className="live-tv__badge">
             <span className="live-pulse" aria-hidden="true" />
-            <span>En vivo</span>
-          </div>
-          {!autoplay ? (
-            <div className="live-tv__controls">
-              <button
-                aria-label="Reproducir TV en vivo"
-                className="live-tv__play"
-                onClick={() => requestLiveTvPlay()}
-                type="button"
-              >
-                <Play size={18} />
-                Ver en vivo
-              </button>
-              <a
-                className="live-tv__external"
-                href={watchLiveEmbedUrl}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <ExternalLink size={15} />
-                Abrir fuente
-              </a>
-            </div>
-          ) : (
-            <div className="live-tv__controls">
-              <a
-                className="live-tv__external"
-                href={watchLiveEmbedUrl}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <ExternalLink size={15} />
-                Abrir fuente
-              </a>
-            </div>
-          )}
+            En vivo
+          </span>
         </div>
       </div>
       <div className="live-tv__meta">
@@ -134,6 +46,10 @@ export function LiveTvPlayer({
           Señal oficial en vivo vía tvstream.cl.{' '}
           <a className="text-link" href={watchLiveHlsUrl} rel="noreferrer" target="_blank">
             HLS directo
+          </a>
+          {' · '}
+          <a className="text-link" href={watchLiveEmbedUrl} rel="noreferrer" target="_blank">
+            Abrir fuente
           </a>
         </p>
       </div>

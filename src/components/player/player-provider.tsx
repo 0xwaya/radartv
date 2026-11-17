@@ -11,7 +11,6 @@ import {
 } from 'react';
 
 import { deibisProfile, liveTrack, type Track } from '@/content/site';
-import { notifyLiveRadioPlay, pauseLiveTv } from '@/lib/live-media-events';
 
 type PlayerContextValue = {
   currentTrack: Track | null;
@@ -136,25 +135,32 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
 
     const audio = ensureAudioElement(audioRef);
-    pauseLiveTv();
-    notifyLiveRadioPlay();
     setCurrentTrack(track);
     setErrorMessage(null);
     setIsLoading(true);
 
     try {
-      // Live Icecast/Shoutcast sources often need a fresh attach to start reliably.
-      audio.pause();
-      audio.src =
-        track.kind === 'live'
-          ? `${track.url}${track.url.includes('?') ? '&' : '?'}_=${Date.now()}`
-          : track.url;
-      audio.load();
+      const alreadyLoaded =
+        Boolean(audio.src) &&
+        (audio.src === track.url || audio.src.startsWith(`${track.url}?`) || audio.src.startsWith(`${track.url}&`));
+
+      if (!alreadyLoaded) {
+        audio.src = track.url;
+        audio.load();
+      }
+
       await audio.play();
     } catch {
-      setIsPlaying(false);
-      setIsLoading(false);
-      setErrorMessage('No se pudo iniciar la reproducción. Revisa tu conexión o prueba más tarde.');
+      // One reconnect attempt for stalled live streams.
+      try {
+        audio.src = track.url;
+        audio.load();
+        await audio.play();
+      } catch {
+        setIsPlaying(false);
+        setIsLoading(false);
+        setErrorMessage('No se pudo iniciar la reproducción. Revisa tu conexión o prueba más tarde.');
+      }
     }
   }, []);
 
@@ -170,7 +176,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       try {
         setErrorMessage(null);
         setIsLoading(true);
-        pauseLiveTv();
         await audio.play();
       } catch {
         setIsPlaying(false);

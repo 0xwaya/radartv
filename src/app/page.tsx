@@ -124,13 +124,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         </div>
       </section>
 
-      <section className="shell action-rail reveal" aria-label={t.explore}>
-        <article className="action-rail__item">
-          <span className="pill">Radio</span>
-          <h2>{t.radioLabel}</h2>
-          <p>{t.radioCardDesc}</p>
-          <PlayerLaunchButton track={liveTrack} variant="secondary" />
-        </article>
+      <section className="shell action-rail action-rail--compact reveal" aria-label={t.explore}>
         <article className="action-rail__item action-rail__item--accent">
           <span className="pill">{t.newsPill}</span>
           <h2>{t.newsTitle}</h2>

@@ -1,8 +1,4 @@
-/** Cross-widget signals so radio and TV don't fight for attention. */
-
-export const LIVE_TV_PLAY_EVENT = 'radartv:play-live-tv';
-export const LIVE_TV_PAUSE_EVENT = 'radartv:pause-live-tv';
-export const LIVE_RADIO_PLAY_EVENT = 'radartv:play-live-radio';
+/** Lightweight coordination — avoid remounting the live TV iframe. */
 
 export function requestLiveTvPlay() {
   if (typeof window === 'undefined') {
@@ -11,19 +7,13 @@ export function requestLiveTvPlay() {
 
   const target = document.getElementById('tv-en-vivo');
   target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  window.dispatchEvent(new CustomEvent(LIVE_TV_PLAY_EVENT));
 }
 
 export function pauseLiveTv() {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  window.dispatchEvent(new CustomEvent(LIVE_TV_PAUSE_EVENT));
+  // Intentionally a no-op: tearing down the tvstream iframe mid-broadcast
+  // caused glitchy reloads. Radio and TV can coexist; the user controls each.
 }
 
 export function notifyLiveRadioPlay() {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  window.dispatchEvent(new CustomEvent(LIVE_RADIO_PLAY_EVENT));
+  // No-op companion for pauseLiveTv — kept so call sites stay stable.
 }
