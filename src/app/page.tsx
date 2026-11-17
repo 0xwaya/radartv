@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { InstagramCurated } from '@/components/instagram-curated';
 import { LiveTvPlayer, WatchLiveButton } from '@/components/player/live-tv-player';
 import { PlayerLaunchButton } from '@/components/player/player-launch-button';
 import { RadarVector } from '@/components/radar-vector';
@@ -93,7 +94,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               fill
               priority
               sizes="(max-width: 900px) 100vw, 48vw"
-              src={deibisProfile.image}
+              src={deibisProfile.heroImage}
             />
           </div>
         </div>
@@ -195,6 +196,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </a>
         </div>
       </section>
+
+      <InstagramCurated
+        description={
+          lang === 'es'
+            ? 'Selección editorial de temas del universo @deibisromero: actualidad, entrevistas, territorio y bastidores. Instagram exige login para embeds en vivo; aquí va curado y listo para abrir el feed.'
+            : 'Editorial selection from the @deibisromero universe: news, interviews, local stories, and behind the scenes. Open Instagram for the live feed.'
+        }
+        title={lang === 'es' ? 'Curado desde @deibisromero' : 'Curated from @deibisromero'}
+      />
 
       <section className="shell content-block content-block--finale">
         <div className="finale-panel">

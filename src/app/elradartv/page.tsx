@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 
+import { InstagramCurated } from '@/components/instagram-curated';
 import { LiveTvPlayer, WatchLiveButton } from '@/components/player/live-tv-player';
 import { PlayerLaunchButton } from '@/components/player/player-launch-button';
 import { RadarVector } from '@/components/radar-vector';
@@ -113,6 +114,8 @@ export default function ElRadarTvPage() {
           </div>
         </div>
       </section>
+
+      <InstagramCurated />
 
       <section className="shell content-block">
         <div className="cta-panel card card--feature">

@@ -59,6 +59,44 @@ export const appLinks = [
   },
 ];
 
+export const instagramProfileUrl = 'https://www.instagram.com/deibisromero';
+
+/** Curated highlights aligned with @deibisromero themes (IG is login-walled; visuals cached locally). */
+export const instagramHighlights = [
+  {
+    id: 'entrevista',
+    tag: 'Entrevista',
+    title: 'Estudio abierto',
+    caption: 'Deibis al aire en Noticias al Día: micrófono, invitados y el ritmo del set de El Radar.',
+    image: '/images/curated/OtQoAX_udno.jpg',
+    href: instagramProfileUrl,
+  },
+  {
+    id: 'noticias',
+    tag: 'Actualidad',
+    title: 'Cobertura en terreno',
+    caption: 'Señal en vivo desde el lugar de los hechos — el pulso diario que también vive en el feed.',
+    image: '/images/curated/P-azZUZCTrk.jpg',
+    href: instagramProfileUrl,
+  },
+  {
+    id: 'territorio',
+    tag: 'Chile',
+    title: 'Historias del Biobío',
+    caption: 'Mercados, territorio y reportajes locales desde Concepción y alrededores.',
+    image: '/images/curated/Kh1x9NT2Ln0.jpg',
+    href: instagramProfileUrl,
+  },
+  {
+    id: 'behind',
+    tag: 'Bastidores',
+    title: 'Fuera de micrófono',
+    caption: 'Comunidad y vida cotidiana — lo que Instagram muestra antes que el portal.',
+    image: '/images/curated/ims3HTrkG3k.jpg',
+    href: instagramProfileUrl,
+  },
+];
+
 export const liveTrack: Track = {
   id: 'deibis-live-radio',
   title: 'El Radar Radio En Vivo',
@@ -103,6 +141,8 @@ export const deibisProfile = {
   name: 'Deibis Romero',
   role: 'Locutor, presentador, productor y fundador',
   image: '/images/deibis-portrait.jpg',
+  /** Atmosphere crop for the home hero (studio still). */
+  heroImage: '/images/deibis-hero.jpg',
   email: 'producciones@deibisromero.com',
   location: 'Concepción, Chile',
   intro:
