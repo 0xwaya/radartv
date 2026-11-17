@@ -149,8 +149,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           title={lang === 'es' ? 'Mira la señal en el portal' : 'Watch the feed in the portal'}
           description={
             lang === 'es'
-              ? 'Reproductor HLS integrado con respaldo externo si la señal falla.'
-              : 'Embedded HLS player with an external fallback if the feed fails.'
+              ? 'Reproductor oficial de El Radar TV (tvstream.cl) con respaldo HLS.'
+              : 'Official El Radar TV player (tvstream.cl) with an HLS fallback.'
           }
         />
         <LiveTvPlayer />

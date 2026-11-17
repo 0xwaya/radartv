@@ -20,7 +20,7 @@ import { buildBroadcastSchema, buildOrganizationSchema } from '@/lib/seo/schema'
 export const metadata: Metadata = {
   title: 'El Radar TV | En Vivo',
   description:
-    'El Radar TV y Radio en vivo: escucha la señal, mira la transmisión HLS en el portal y sigue clips y programación.',
+    'El Radar TV y Radio en vivo: escucha la señal, mira la transmisión oficial en el portal y sigue clips y programación.',
   alternates: {
     canonical: `${siteUrl}/elradartv`,
   },
