@@ -1,16 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { LiveTvPlayer, WatchLiveButton } from '@/components/player/live-tv-player';
 import { PlayerLaunchButton } from '@/components/player/player-launch-button';
 import { RadarVector } from '@/components/radar-vector';
 import { SectionHeading } from '@/components/section-heading';
 import {
   brandSummary,
-  ctaBlocks,
   deibisProfile,
   liveTrack,
   socialLinks,
-  watchLiveUrl,
   whatsappLink,
   youtubeStreamsUrl,
 } from '@/content/site';
@@ -110,9 +109,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <p className="hero-stage__lede">{t.heroBody}</p>
           <div className="hero__actions">
             <PlayerLaunchButton track={liveTrack} />
-            <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
-              {ctaBlocks.stream.label}
-            </a>
+            <WatchLiveButton />
           </div>
           <div className="hero-stage__links">
             <Link href={`/deibisromero${langSuffix}`}>{t.profileBtn}</Link>
@@ -132,9 +129,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <span className="pill">TV</span>
           <h2>El Radar TV</h2>
           <p>{t.tvCardDesc}</p>
-          <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
-            {t.watchTv}
-          </a>
+          <WatchLiveButton label={t.watchTv} />
         </article>
         <article className="action-rail__item">
           <span className="pill">Contacto</span>
@@ -144,6 +139,19 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             {t.openWhatsapp}
           </a>
         </article>
+      </section>
+
+      <section className="shell content-block">
+        <SectionHeading
+          eyebrow="TV"
+          title={lang === 'es' ? 'Mira la señal en el portal' : 'Watch the feed in the portal'}
+          description={
+            lang === 'es'
+              ? 'Reproductor HLS integrado con respaldo externo si la señal falla.'
+              : 'Embedded HLS player with an external fallback if the feed fails.'
+          }
+        />
+        <LiveTvPlayer />
       </section>
 
       <section className="shell content-block">
