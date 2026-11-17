@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function ElRadarTvPage() {
   return (
     <>
-      <section className="hero shell hero--compact">
+      <section className="hero shell hero--compact hero--portrait">
         <div className="hero__content">
           <span className="hero__eyebrow">Medio en vivo</span>
           <h1>El Radar TV</h1>
@@ -44,19 +44,15 @@ export default function ElRadarTvPage() {
             </a>
           </div>
         </div>
-        <div className="hero__visual card card--feature card--glow">
+        <div className="hero__visual hero__visual--stack">
           <RadarVector className="hero__radar hero__radar--media" />
           <Image
             alt="Deibis Romero — El Radar TV"
-            height={600}
+            height={750}
             priority
             src={deibisProfile.image}
             width={600}
           />
-          <div className="hero__visual-copy">
-            <p className="kicker">Acción siempre visible</p>
-            <h2>Escucha en vivo, mira TV o pasa directo a los clips.</h2>
-          </div>
         </div>
       </section>
 

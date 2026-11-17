@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function DeibisRomeroPage() {
   return (
     <>
-      <section className="hero shell hero--compact">
+      <section className="hero shell hero--compact hero--portrait">
         <div className="hero__content">
           <span className="hero__eyebrow">Perfil profesional</span>
           <h1>{deibisProfile.name}</h1>
@@ -44,17 +44,17 @@ export default function DeibisRomeroPage() {
           </div>
           <div className="stat-row">
             {deibisProfile.stats.map((item) => (
-              <div key={item.label} className="card stat-card">
+              <div key={item.label} className="stat-card">
                 <span>{item.label}</span>
                 <strong>{item.value}</strong>
               </div>
             ))}
           </div>
         </div>
-        <div className="hero__visual card card--feature">
+        <div className="hero__visual">
           <Image
             alt={deibisProfile.name}
-            height={600}
+            height={750}
             priority
             src={deibisProfile.image}
             width={600}
