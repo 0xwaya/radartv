@@ -40,6 +40,6 @@ npm run build
 
 ## Notas
 
-- El audio en vivo usa el stream MP3 público de Lorini.
+- El audio en vivo usa el stream de ipstream (`stream2.ipstream.cl/8018/stream`).
 - La TV HLS aún se abre como acción externa; el player embebido es fase B.
 - Los demos de voz siguen enlazando a las galerías legacy hasta exportar archivos propios.
