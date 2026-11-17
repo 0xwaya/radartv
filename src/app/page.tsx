@@ -45,9 +45,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       lang === 'es'
         ? 'Señal principal con el reproductor integrado.'
         : 'Main feed with the integrated player.',
-    tvCardDesc:
-      lang === 'es' ? 'Transmisión de video en un toque.' : 'Video stream in one tap.',
-    watchTv: lang === 'es' ? 'Ver TV En Vivo' : 'Watch Live TV',
+    newsPill: lang === 'es' ? 'Programa' : 'Show',
+    newsTitle: lang === 'es' ? 'Minuto en la Noticia' : 'Minuto en la Noticia',
+    newsCardDesc:
+      lang === 'es'
+        ? 'El boletín informativo de El Radar: titulares claros, al aire y en archivo.'
+        : 'El Radar’s news bulletin: clear headlines, live and on demand.',
+    newsCta: lang === 'es' ? 'Ver emisiones' : 'Watch episodes',
     contactCardTitle: lang === 'es' ? 'Habla con Deibis' : 'Talk to Deibis',
     contactCardDesc:
       lang === 'es'
@@ -128,10 +132,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <PlayerLaunchButton track={liveTrack} variant="secondary" />
         </article>
         <article className="action-rail__item action-rail__item--accent">
-          <span className="pill">TV</span>
-          <h2>El Radar TV</h2>
-          <p>{t.tvCardDesc}</p>
-          <WatchLiveButton label={t.watchTv} />
+          <span className="pill">{t.newsPill}</span>
+          <h2>{t.newsTitle}</h2>
+          <p>{t.newsCardDesc}</p>
+          <a className="button button--secondary" href="#emisiones">
+            {t.newsCta}
+          </a>
         </article>
         <article className="action-rail__item">
           <span className="pill">Contacto</span>
@@ -156,7 +162,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         <LiveTvPlayer />
       </section>
 
-      <section className="shell content-block">
+      <section className="shell content-block" id="emisiones">
         <SectionHeading
           eyebrow={t.streamsEyebrow}
           title={t.streamsTitle}
