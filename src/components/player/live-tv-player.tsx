@@ -1,10 +1,17 @@
 'use client';
 
 import Hls from 'hls.js';
-import { AlertCircle, ExternalLink, Pause, Play, RefreshCw } from 'lucide-react';
+import { AlertCircle, ExternalLink, LoaderCircle, Pause, Play, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { usePlayer } from '@/components/player/player-provider';
 import { deibisProfile, watchLiveUrl } from '@/content/site';
+import {
+  LIVE_RADIO_PLAY_EVENT,
+  LIVE_TV_PAUSE_EVENT,
+  LIVE_TV_PLAY_EVENT,
+  requestLiveTvPlay,
+} from '@/lib/live-media-events';
 
 type LiveTvPlayerProps = {
   title?: string;
@@ -19,6 +26,8 @@ export function LiveTvPlayer({
 }: LiveTvPlayerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const autoPlayRef = useRef(false);
+  const { stop: stopRadio } = usePlayer();
   const [status, setStatus] = useState<PlayerStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
@@ -30,13 +39,32 @@ export function LiveTvPlayer({
     }
   }, []);
 
+  const tryPlay = useCallback(async () => {
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    try {
+      stopRadio();
+      setStatus('loading');
+      setErrorMessage(null);
+      await video.play();
+    } catch {
+      // Autoplay may be blocked until a later gesture; keep stream attached.
+      setStatus((current) => (current === 'playing' ? current : 'paused'));
+      if (autoPlayRef.current) {
+        setErrorMessage('Toca “Ver en vivo” en el reproductor para iniciar el video.');
+      }
+    }
+  }, [stopRadio]);
+
   const attachStream = useCallback(() => {
     const video = videoRef.current;
     if (!video) {
       return;
     }
 
-    // reloadToken forces a fresh attach when the user retries.
     void reloadToken;
 
     destroyHls();
@@ -49,6 +77,15 @@ export function LiveTvPlayer({
       video.removeAttribute('src');
       video.load();
       video.src = watchLiveUrl;
+      const onCanPlay = () => {
+        video.removeEventListener('canplay', onCanPlay);
+        if (autoPlayRef.current) {
+          void tryPlay();
+        } else {
+          setStatus('paused');
+        }
+      };
+      video.addEventListener('canplay', onCanPlay);
       return;
     }
 
@@ -61,6 +98,13 @@ export function LiveTvPlayer({
       hlsRef.current = hls;
       hls.loadSource(watchLiveUrl);
       hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (autoPlayRef.current) {
+          void tryPlay();
+        } else {
+          setStatus('paused');
+        }
+      });
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (!data.fatal) {
           return;
@@ -85,7 +129,7 @@ export function LiveTvPlayer({
 
     setStatus('error');
     setErrorMessage('Este navegador no soporta reproducción HLS integrada.');
-  }, [destroyHls, reloadToken]);
+  }, [destroyHls, reloadToken, tryPlay]);
 
   useEffect(() => {
     attachStream();
@@ -100,7 +144,10 @@ export function LiveTvPlayer({
       return;
     }
 
-    const onPlaying = () => setStatus('playing');
+    const onPlaying = () => {
+      setStatus('playing');
+      setErrorMessage(null);
+    };
     const onPause = () => {
       if (!video.ended) {
         setStatus((current) => (current === 'error' ? current : 'paused'));
@@ -125,6 +172,50 @@ export function LiveTvPlayer({
     };
   }, []);
 
+  useEffect(() => {
+    const onPlayRequest = () => {
+      autoPlayRef.current = true;
+      const video = videoRef.current;
+      if (!video) {
+        return;
+      }
+
+      const startWhenReady = () => {
+        if (autoPlayRef.current) {
+          void tryPlay();
+        }
+      };
+
+      if (video.readyState >= 2) {
+        startWhenReady();
+        return;
+      }
+
+      // Stream still buffering — play as soon as media can start.
+      const onCanPlay = () => {
+        video.removeEventListener('canplay', onCanPlay);
+        startWhenReady();
+      };
+      video.addEventListener('canplay', onCanPlay);
+      void tryPlay();
+    };
+
+    const onPauseRequest = () => {
+      autoPlayRef.current = false;
+      videoRef.current?.pause();
+    };
+
+    window.addEventListener(LIVE_TV_PLAY_EVENT, onPlayRequest);
+    window.addEventListener(LIVE_TV_PAUSE_EVENT, onPauseRequest);
+    window.addEventListener(LIVE_RADIO_PLAY_EVENT, onPauseRequest);
+
+    return () => {
+      window.removeEventListener(LIVE_TV_PLAY_EVENT, onPlayRequest);
+      window.removeEventListener(LIVE_TV_PAUSE_EVENT, onPauseRequest);
+      window.removeEventListener(LIVE_RADIO_PLAY_EVENT, onPauseRequest);
+    };
+  }, [tryPlay]);
+
   const togglePlayback = async () => {
     const video = videoRef.current;
     if (!video) {
@@ -132,27 +223,28 @@ export function LiveTvPlayer({
     }
 
     if (status === 'error') {
+      autoPlayRef.current = true;
       setReloadToken((value) => value + 1);
       return;
     }
 
-    try {
-      if (video.paused) {
-        await video.play();
-      } else {
-        video.pause();
-      }
-    } catch {
-      setStatus('error');
-      setErrorMessage('No se pudo iniciar el video. Revisa tu conexión o permite la reproducción.');
+    if (video.paused) {
+      autoPlayRef.current = true;
+      await tryPlay();
+      return;
     }
+
+    autoPlayRef.current = false;
+    video.pause();
   };
 
   const retry = () => {
+    autoPlayRef.current = true;
     setReloadToken((value) => value + 1);
   };
 
   const isPlaying = status === 'playing';
+  const isLoading = status === 'loading';
 
   return (
     <div className={`live-tv ${className}`.trim()} id="tv-en-vivo">
@@ -163,9 +255,9 @@ export function LiveTvPlayer({
           controls={false}
           playsInline
           poster={deibisProfile.image}
-          preload="metadata"
+          preload="auto"
         />
-        <div className="live-tv__overlay">
+        <div className={`live-tv__overlay${isPlaying ? ' live-tv__overlay--playing' : ''}`}>
           <div className="live-tv__badge">
             <span className="live-pulse" aria-hidden="true" />
             <span>En vivo</span>
@@ -177,21 +269,30 @@ export function LiveTvPlayer({
               onClick={() => void togglePlayback()}
               type="button"
             >
-              {status === 'error' ? <RefreshCw size={18} /> : isPlaying ? <Pause size={18} /> : <Play size={18} />}
-              {status === 'error' ? 'Reintentar' : isPlaying ? 'Pausar' : 'Ver en vivo'}
+              {status === 'error' ? (
+                <RefreshCw size={18} />
+              ) : isLoading ? (
+                <LoaderCircle className="button__spin" size={18} />
+              ) : isPlaying ? (
+                <Pause size={18} />
+              ) : (
+                <Play size={18} />
+              )}
+              {status === 'error'
+                ? 'Reintentar'
+                : isLoading
+                  ? 'Conectando…'
+                  : isPlaying
+                    ? 'Pausar'
+                    : 'Ver en vivo'}
             </button>
-            <a
-              className="live-tv__external"
-              href={watchLiveUrl}
-              rel="noreferrer"
-              target="_blank"
-            >
+            <a className="live-tv__external" href={watchLiveUrl} rel="noreferrer" target="_blank">
               <ExternalLink size={15} />
               Abrir fuente
             </a>
           </div>
         </div>
-        {status === 'loading' ? <div className="live-tv__loading">Conectando señal…</div> : null}
+        {isLoading ? <div className="live-tv__loading">Conectando señal…</div> : null}
       </div>
       <div className="live-tv__meta">
         <div>
@@ -222,9 +323,13 @@ export function WatchLiveButton({
   variant?: 'primary' | 'secondary';
 }) {
   return (
-    <a className={`button button--${variant}`} href="#tv-en-vivo">
+    <button
+      className={`button button--${variant}`}
+      onClick={() => requestLiveTvPlay()}
+      type="button"
+    >
       <Play size={16} />
       {label}
-    </a>
+    </button>
   );
 }

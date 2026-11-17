@@ -937,6 +937,43 @@ main {
   background:
     linear-gradient(180deg, rgba(5, 11, 21, 0.45) 0%, transparent 28%),
     linear-gradient(0deg, rgba(5, 11, 21, 0.72) 0%, transparent 38%);
+  transition: opacity 220ms ease, background 220ms ease;
+}
+
+.live-tv__overlay--playing {
+  background:
+    linear-gradient(180deg, rgba(5, 11, 21, 0.28) 0%, transparent 22%),
+    linear-gradient(0deg, rgba(5, 11, 21, 0.5) 0%, transparent 32%);
+}
+
+.live-tv__overlay--playing .live-tv__controls {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.live-tv__frame:hover .live-tv__overlay--playing .live-tv__controls,
+.live-tv__frame:focus-within .live-tv__overlay--playing .live-tv__controls {
+  opacity: 1;
+}
+
+.button__spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.global-player--active {
+  border-top-color: rgba(114, 212, 232, 0.35);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.button:disabled {
+  opacity: 0.72;
+  cursor: wait;
 }
 
 .live-tv__badge {

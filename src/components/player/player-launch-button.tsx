@@ -1,6 +1,6 @@
 'use client';
 
-import { ExternalLink, Play } from 'lucide-react';
+import { ExternalLink, LoaderCircle, Pause, Play } from 'lucide-react';
 
 import { usePlayer } from '@/components/player/player-provider';
 import type { Track } from '@/content/site';
@@ -11,7 +11,10 @@ type PlayerLaunchButtonProps = {
 };
 
 export function PlayerLaunchButton({ track, variant = 'primary' }: PlayerLaunchButtonProps) {
-  const { playTrack } = usePlayer();
+  const { playTrack, stop, isPlaying, isLoading, currentTrack } = usePlayer();
+  const isThisTrack = currentTrack?.id === track.id;
+  const active = isThisTrack && isPlaying;
+  const connecting = isThisTrack && isLoading;
 
   if (!track.url && track.externalUrl) {
     return (
@@ -22,10 +25,41 @@ export function PlayerLaunchButton({ track, variant = 'primary' }: PlayerLaunchB
     );
   }
 
+  const label =
+    track.kind === 'live'
+      ? connecting
+        ? 'Conectando…'
+        : active
+          ? 'Pausar Radio'
+          : 'Escuchar En Vivo'
+      : connecting
+        ? 'Cargando…'
+        : active
+          ? 'Pausar'
+          : 'Reproducir Preview';
+
   return (
-    <button className={`button button--${variant}`} onClick={() => void playTrack(track)} type="button">
-      <Play size={16} />
-      {track.kind === 'live' ? 'Escuchar En Vivo' : 'Reproducir Preview'}
+    <button
+      aria-busy={connecting}
+      className={`button button--${variant}`}
+      disabled={connecting}
+      onClick={() => {
+        if (active) {
+          stop();
+          return;
+        }
+        void playTrack(track);
+      }}
+      type="button"
+    >
+      {connecting ? (
+        <LoaderCircle className="button__spin" size={16} />
+      ) : active ? (
+        <Pause size={16} />
+      ) : (
+        <Play size={16} />
+      )}
+      {label}
     </button>
   );
 }
