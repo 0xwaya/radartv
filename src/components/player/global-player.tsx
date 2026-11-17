@@ -5,11 +5,19 @@ import { Pause, Play, Radio, Volume2 } from 'lucide-react';
 import { usePlayer } from '@/components/player/player-provider';
 
 export function GlobalPlayer() {
-  const { currentTrack, isPlaying, togglePlayback, stop, setVolume, volume, errorMessage } =
-    usePlayer();
+  const {
+    currentTrack,
+    isPlaying,
+    isLoading,
+    togglePlayback,
+    stop,
+    setVolume,
+    volume,
+    errorMessage,
+  } = usePlayer();
 
   return (
-    <div className="global-player">
+    <div className={`global-player${isPlaying || isLoading ? ' global-player--active' : ''}`}>
       <div className="shell global-player__inner">
         <div className="global-player__meta">
           <span className="global-player__badge">
@@ -17,7 +25,11 @@ export function GlobalPlayer() {
             Reproductor permanente
           </span>
           <div>
-            <p className="global-player__title">{currentTrack?.title ?? 'Listo para reproducir en vivo'}</p>
+            <p className="global-player__title">
+              {isLoading
+                ? 'Conectando radio en vivo…'
+                : (currentTrack?.title ?? 'Listo para reproducir en vivo')}
+            </p>
             <p
               className={`global-player__subtitle${errorMessage ? ' global-player__subtitle--error' : ''}`}
             >
@@ -28,9 +40,14 @@ export function GlobalPlayer() {
           </div>
         </div>
         <div className="global-player__controls">
-          <button className="player-button" onClick={() => void togglePlayback()} type="button">
+          <button
+            className="player-button"
+            disabled={isLoading}
+            onClick={() => void togglePlayback()}
+            type="button"
+          >
             {isPlaying ? <Pause size={16} /> : <Play size={16} />}
-            {isPlaying ? 'Pausar' : 'Reproducir'}
+            {isLoading ? 'Conectando…' : isPlaying ? 'Pausar' : 'Reproducir'}
           </button>
           <button className="player-button player-button--quiet" onClick={stop} type="button">
             Detener

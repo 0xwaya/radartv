@@ -11,10 +11,12 @@ import {
 } from 'react';
 
 import { deibisProfile, liveTrack, type Track } from '@/content/site';
+import { notifyLiveRadioPlay, pauseLiveTv } from '@/lib/live-media-events';
 
 type PlayerContextValue = {
   currentTrack: Track | null;
   isPlaying: boolean;
+  isLoading: boolean;
   volume: number;
   errorMessage: string | null;
   playTrack: (track: Track) => Promise<void>;
@@ -40,24 +42,32 @@ function syncMediaSession(track: Track | null, isPlaying: boolean) {
     title: track.title,
     artist: deibisProfile.name,
     album: 'El Radar Radio',
-    artwork: [
-      { src: deibisProfile.image, sizes: '512x512', type: 'image/jpeg' },
-    ],
+    artwork: [{ src: deibisProfile.image, sizes: '512x512', type: 'image/jpeg' }],
   });
   navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+}
+
+function ensureAudioElement(audioRef: { current: HTMLAudioElement | null }) {
+  if (audioRef.current) {
+    return audioRef.current;
+  }
+
+  const audio = new Audio();
+  audio.preload = 'none';
+  audioRef.current = audio;
+  return audio;
 }
 
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolumeState] = useState(0.72);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const audio = new Audio();
-    audio.preload = 'none';
-    audioRef.current = audio;
+    const audio = ensureAudioElement(audioRef);
 
     const storedVolume = window.localStorage.getItem('radartv-volume');
     if (storedVolume) {
@@ -72,25 +82,42 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
     const handlePlay = () => {
       setIsPlaying(true);
+      setIsLoading(false);
       setErrorMessage(null);
     };
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => setIsPlaying(false);
+    const handlePause = () => {
+      setIsPlaying(false);
+      setIsLoading(false);
+    };
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setIsLoading(false);
+    };
+    const handleWaiting = () => setIsLoading(true);
+    const handlePlaying = () => {
+      setIsPlaying(true);
+      setIsLoading(false);
+    };
     const handleError = () => {
       setIsPlaying(false);
+      setIsLoading(false);
       setErrorMessage('No se pudo reproducir la señal. Inténtalo de nuevo en unos segundos.');
     };
 
     audio.addEventListener('play', handlePlay);
+    audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('waiting', handleWaiting);
     audio.addEventListener('error', handleError);
 
     return () => {
       audio.pause();
       audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('waiting', handleWaiting);
       audio.removeEventListener('error', handleError);
       audioRef.current = null;
     };
@@ -101,49 +128,59 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [currentTrack, isPlaying]);
 
   const playTrack = useCallback(async (track: Track) => {
-    if (!track.url || !audioRef.current) {
+    if (!track.url) {
       if (track.externalUrl) {
         window.open(track.externalUrl, '_blank', 'noopener,noreferrer');
       }
       return;
     }
 
-    try {
-      if (audioRef.current.src !== track.url) {
-        audioRef.current.src = track.url;
-      }
+    const audio = ensureAudioElement(audioRef);
+    pauseLiveTv();
+    notifyLiveRadioPlay();
+    setCurrentTrack(track);
+    setErrorMessage(null);
+    setIsLoading(true);
 
-      setCurrentTrack(track);
-      setErrorMessage(null);
-      await audioRef.current.play();
+    try {
+      // Live Icecast/Shoutcast sources often need a fresh attach to start reliably.
+      audio.pause();
+      audio.src =
+        track.kind === 'live'
+          ? `${track.url}${track.url.includes('?') ? '&' : '?'}_=${Date.now()}`
+          : track.url;
+      audio.load();
+      await audio.play();
     } catch {
       setIsPlaying(false);
+      setIsLoading(false);
       setErrorMessage('No se pudo iniciar la reproducción. Revisa tu conexión o prueba más tarde.');
     }
   }, []);
 
   const togglePlayback = useCallback(async () => {
-    if (!audioRef.current) {
-      return;
-    }
+    const audio = ensureAudioElement(audioRef);
 
     if (!currentTrack) {
       await playTrack(liveTrack);
       return;
     }
 
-    if (audioRef.current.paused) {
+    if (audio.paused) {
       try {
         setErrorMessage(null);
-        await audioRef.current.play();
+        setIsLoading(true);
+        pauseLiveTv();
+        await audio.play();
       } catch {
         setIsPlaying(false);
+        setIsLoading(false);
         setErrorMessage('No se pudo reanudar la señal en vivo.');
       }
       return;
     }
 
-    audioRef.current.pause();
+    audio.pause();
   }, [currentTrack, playTrack]);
 
   useEffect(() => {
@@ -164,6 +201,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
       setIsPlaying(false);
+      setIsLoading(false);
     });
 
     return () => {
@@ -174,11 +212,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [togglePlayback]);
 
   const setVolume = (nextVolume: number) => {
-    if (!audioRef.current) {
-      return;
-    }
-
-    audioRef.current.volume = nextVolume;
+    const audio = ensureAudioElement(audioRef);
+    audio.volume = nextVolume;
     setVolumeState(nextVolume);
     window.localStorage.setItem('radartv-volume', String(nextVolume));
   };
@@ -191,6 +226,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     audioRef.current.pause();
     audioRef.current.currentTime = 0;
     setIsPlaying(false);
+    setIsLoading(false);
   };
 
   const clearError = () => setErrorMessage(null);
@@ -198,6 +234,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const value = {
     currentTrack,
     isPlaying,
+    isLoading,
     volume,
     errorMessage,
     playTrack,
