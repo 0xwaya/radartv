@@ -3,13 +3,14 @@
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
 } from 'react';
 
-import { liveTrack, type Track } from '@/content/site';
+import { deibisProfile, liveTrack, type Track } from '@/content/site';
 
 type PlayerContextValue = {
   currentTrack: Track | null;
@@ -24,6 +25,27 @@ type PlayerContextValue = {
 };
 
 const PlayerContext = createContext<PlayerContextValue | null>(null);
+
+function syncMediaSession(track: Track | null, isPlaying: boolean) {
+  if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
+    return;
+  }
+
+  if (!track) {
+    navigator.mediaSession.metadata = null;
+    return;
+  }
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track.title,
+    artist: deibisProfile.name,
+    album: 'El Radar Radio',
+    artwork: [
+      { src: deibisProfile.image, sizes: '512x512', type: 'image/jpeg' },
+    ],
+  });
+  navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+}
 
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -74,7 +96,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const playTrack = async (track: Track) => {
+  useEffect(() => {
+    syncMediaSession(currentTrack, isPlaying);
+  }, [currentTrack, isPlaying]);
+
+  const playTrack = useCallback(async (track: Track) => {
     if (!track.url || !audioRef.current) {
       if (track.externalUrl) {
         window.open(track.externalUrl, '_blank', 'noopener,noreferrer');
@@ -94,9 +120,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setIsPlaying(false);
       setErrorMessage('No se pudo iniciar la reproducción. Revisa tu conexión o prueba más tarde.');
     }
-  };
+  }, []);
 
-  const togglePlayback = async () => {
+  const togglePlayback = useCallback(async () => {
     if (!audioRef.current) {
       return;
     }
@@ -118,7 +144,34 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
 
     audioRef.current.pause();
-  };
+  }, [currentTrack, playTrack]);
+
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
+      return;
+    }
+
+    navigator.mediaSession.setActionHandler('play', () => {
+      void togglePlayback();
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+      audioRef.current?.pause();
+    });
+    navigator.mediaSession.setActionHandler('stop', () => {
+      if (!audioRef.current) {
+        return;
+      }
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    });
+
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null);
+      navigator.mediaSession.setActionHandler('pause', null);
+      navigator.mediaSession.setActionHandler('stop', null);
+    };
+  }, [togglePlayback]);
 
   const setVolume = (nextVolume: number) => {
     if (!audioRef.current) {

@@ -1,25 +1,24 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 
+import { LiveTvPlayer, WatchLiveButton } from '@/components/player/live-tv-player';
 import { PlayerLaunchButton } from '@/components/player/player-launch-button';
 import { RadarVector } from '@/components/radar-vector';
 import { SectionHeading } from '@/components/section-heading';
 import {
   clipTracks,
-  ctaBlocks,
   deibisProfile,
   liveTrack,
   radarProgramming,
   siteUrl,
   socialLinks,
-  watchLiveUrl,
 } from '@/content/site';
 import { buildBroadcastSchema, buildOrganizationSchema } from '@/lib/seo/schema';
 
 export const metadata: Metadata = {
   title: 'El Radar TV | En Vivo',
   description:
-    'El Radar TV y Radio en vivo: escucha la señal, abre la transmisión de video y sigue clips y programación.',
+    'El Radar TV y Radio en vivo: escucha la señal, mira la transmisión HLS en el portal y sigue clips y programación.',
   alternates: {
     canonical: `${siteUrl}/elradartv`,
   },
@@ -28,36 +27,39 @@ export const metadata: Metadata = {
 export default function ElRadarTvPage() {
   return (
     <>
-      <section className="hero shell hero--compact">
+      <section className="hero shell hero--compact hero--portrait">
         <div className="hero__content">
           <span className="hero__eyebrow">Medio en vivo</span>
           <h1>El Radar TV</h1>
           <p className="hero__subhead">Dinámico, en tiempo real y pensado para acceso inmediato.</p>
           <p>
-            La experiencia de medio lidera con audio en vivo, entrada a TV, superficie de clips y
+            La experiencia de medio lidera con audio en vivo, TV integrada, superficie de clips y
             espacio para programación, entrevistas y comunidad.
           </p>
           <div className="hero__actions">
             <PlayerLaunchButton track={liveTrack} />
-            <a className="button button--secondary" href={watchLiveUrl} rel="noreferrer" target="_blank">
-              Ver TV En Vivo
-            </a>
+            <WatchLiveButton />
           </div>
         </div>
-        <div className="hero__visual card card--feature card--glow">
+        <div className="hero__visual hero__visual--stack">
           <RadarVector className="hero__radar hero__radar--media" />
           <Image
             alt="Deibis Romero — El Radar TV"
-            height={600}
+            height={750}
             priority
             src={deibisProfile.image}
             width={600}
           />
-          <div className="hero__visual-copy">
-            <p className="kicker">Acción siempre visible</p>
-            <h2>Escucha en vivo, mira TV o pasa directo a los clips.</h2>
-          </div>
         </div>
+      </section>
+
+      <section className="shell content-block">
+        <SectionHeading
+          eyebrow="TV en vivo"
+          title="La señal de video vive en el portal"
+          description="Reproductor HLS nativo en Safari y con hls.js en el resto de navegadores, con reintento y enlace de respaldo."
+        />
+        <LiveTvPlayer />
       </section>
 
       <section className="shell content-block">
@@ -80,9 +82,9 @@ export default function ElRadarTvPage() {
       <section className="shell content-block two-column">
         <div>
           <SectionHeading
-            eyebrow="Reproductor"
-            title="La reproducción global se mantiene entre páginas"
-            description="La señal de radio usa el stream MP3 público; el video HLS queda como acción directa de ver en vivo."
+            eyebrow="Radio"
+            title="La reproducción de audio se mantiene entre páginas"
+            description="La señal radial usa el stream MP3 público y el reproductor global del portal."
           />
           <div className="stack">
             <article className="card">
@@ -90,19 +92,6 @@ export default function ElRadarTvPage() {
               <h3>{liveTrack.title}</h3>
               <p>{liveTrack.subtitle}</p>
               <PlayerLaunchButton track={liveTrack} variant="secondary" />
-            </article>
-            <article className="card">
-              <p className="kicker">TV en vivo</p>
-              <h3>Señal de video</h3>
-              <p>Abre la transmisión HLS de El Radar TV en un toque.</p>
-              <a
-                className="button button--secondary"
-                href={ctaBlocks.stream.href}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {ctaBlocks.stream.label}
-              </a>
             </article>
           </div>
         </div>

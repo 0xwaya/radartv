@@ -183,7 +183,7 @@ export const ctaBlocks = {
   stream: {
     title: 'Acceso en vivo como prioridad del portal',
     body: 'TV y radio en un toque, especialmente para tráfico móvil en Chile.',
-    href: watchLiveUrl,
+    href: '#tv-en-vivo',
     label: 'Ver TV En Vivo',
   },
 };
