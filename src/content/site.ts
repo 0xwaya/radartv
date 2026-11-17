@@ -109,7 +109,18 @@ export const liveTrack: Track = {
   externalUrl: 'https://stream2.ipstream.cl/8018/stream',
 };
 
-export const watchLiveUrl = 'https://video.ipstream.cl:3459/hybrid/play.m3u8';
+/** Official El Radar TV player embed from Deibis / tvstream.cl */
+export const watchLiveEmbedUrl =
+  process.env.NEXT_PUBLIC_TV_EMBED_URL?.trim() ||
+  'https://panel.tvstream.cl:2020/VideoPlayer/xzfsepkbtx?autoplay=1';
+
+/** Direct HLS mirror (same station key); kept as optional fallback / “Abrir fuente”. */
+export const watchLiveHlsUrl =
+  process.env.NEXT_PUBLIC_TV_HLS_URL?.trim() ||
+  'https://panel.tvstream.cl:1936/xzfsepkbtx/xzfsepkbtx/playlist.m3u8';
+
+/** Primary watch URL used by CTAs (the hosted embed). */
+export const watchLiveUrl = watchLiveEmbedUrl;
 
 export const clipTracks: Track[] = [
   {

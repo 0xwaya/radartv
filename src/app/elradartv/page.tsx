@@ -59,7 +59,7 @@ export default function ElRadarTvPage() {
         <SectionHeading
           eyebrow="TV en vivo"
           title="La señal de video vive en el portal"
-          description="Reproductor HLS nativo en Safari y con hls.js en el resto de navegadores, con reintento y enlace de respaldo."
+          description="Reproductor oficial de El Radar TV (tvstream.cl), con autoplay desde el portal y enlace HLS de respaldo."
         />
         <LiveTvPlayer />
       </section>
