@@ -14,6 +14,7 @@ import {
   siteUrl,
   socialLinks,
 } from '@/content/site';
+import { externalAnchorProps } from '@/lib/external-href';
 import { buildPersonSchema } from '@/lib/seo/schema';
 
 export const metadata: Metadata = {
@@ -150,7 +151,7 @@ export default function DeibisRomeroPage() {
         />
         <div className="social-strip card">
           {socialLinks.map((item) => (
-            <a key={item.href} href={item.href} rel="noreferrer" target="_blank">
+            <a key={item.href} {...externalAnchorProps(item.href)}>
               {item.label}
             </a>
           ))}

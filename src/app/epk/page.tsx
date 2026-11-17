@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { SectionHeading } from '@/components/section-heading';
 import { deibisProfile, siteUrl, socialLinks } from '@/content/site';
+import { externalAnchorProps } from '@/lib/external-href';
 
 export const metadata: Metadata = {
   title: 'EPK | Deibis Romero',
@@ -48,7 +49,7 @@ export default function EpkPage() {
       </div>
       <div className="social-strip card" style={{ marginTop: '1.5rem' }}>
         {socialLinks.map((item) => (
-          <a key={item.href} href={item.href} rel="noreferrer" target="_blank">
+          <a key={item.href} {...externalAnchorProps(item.href)}>
             {item.label}
           </a>
         ))}

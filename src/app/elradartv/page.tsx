@@ -14,6 +14,7 @@ import {
   siteUrl,
   socialLinks,
 } from '@/content/site';
+import { externalAnchorProps } from '@/lib/external-href';
 import { buildBroadcastSchema, buildOrganizationSchema } from '@/lib/seo/schema';
 
 export const metadata: Metadata = {
@@ -129,7 +130,7 @@ export default function ElRadarTvPage() {
           </div>
           <div className="social-strip social-strip--compact">
             {socialLinks.map((item) => (
-              <a key={item.href} href={item.href} rel="noreferrer" target="_blank">
+              <a key={item.href} {...externalAnchorProps(item.href)}>
                 {item.label}
               </a>
             ))}
