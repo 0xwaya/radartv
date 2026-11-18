@@ -40,6 +40,7 @@ npm run build
 
 ## Notas
 
-- El audio en vivo usa el stream de ipstream (`stream2.ipstream.cl/8018/stream`).
-- La TV HLS aún se abre como acción externa; el player embebido es fase B.
-- Los demos de voz siguen enlazando a las galerías legacy hasta exportar archivos propios.
+- El audio en vivo usa el stream canónico de deibisromero.com (`stream.ipstream.cl/8008/stream`).
+- La señal TV de estación usa HLS (`video.ipstream.cl`); Minuto en la Noticia usa el embed tvstream.cl.
+- Los demos de voz apuntan a clips publicados en la galería Sonidos (YouTube) de deibisromero.com.
+- Redes sincronizadas: Instagram (@deibisromero / @elradar_oficial), Twitch (@elradartv), YouTube, TikTok, Facebook y X.

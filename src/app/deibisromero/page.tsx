@@ -114,8 +114,8 @@ export default function DeibisRomeroPage() {
         <div>
           <SectionHeading
             eyebrow="Muestras de voz"
-            title="Acceso a demos mientras se publica la librería propia"
-            description="Las galerías actuales no exponen archivos descargables directos; aquí quedan los caminos oficiales a sonidos y clips."
+            title="Demos publicados en la galería Sonidos"
+            description="Clips de locución comercial y noticias tomados de deibisromero.com/sonidos (YouTube), más el enlace a la galería completa."
           />
           <div className="stack">
             {clipTracks.map((track) => (

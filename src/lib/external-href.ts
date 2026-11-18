@@ -6,6 +6,11 @@
  */
 export const instagramBridgePath = '/go/instagram';
 
+const knownInstagramProfiles: Record<string, string> = {
+  deibisromero: 'deibisromero',
+  elradar_oficial: 'elradar_oficial',
+};
+
 export function isInstagramHref(href: string): boolean {
   try {
     const host = new URL(href).hostname.replace(/^www\./, '');
@@ -15,13 +20,27 @@ export function isInstagramHref(href: string): boolean {
   }
 }
 
+/** Map an Instagram profile URL to the same-origin bridge path (optional ?profile=). */
+export function instagramBridgeHref(href: string): string {
+  try {
+    const url = new URL(href);
+    const handle = url.pathname.split('/').filter(Boolean)[0]?.toLowerCase();
+    if (handle && handle !== 'deibisromero' && knownInstagramProfiles[handle]) {
+      return `${instagramBridgePath}?profile=${knownInstagramProfiles[handle]}`;
+    }
+  } catch {
+    // fall through to default bridge
+  }
+  return instagramBridgePath;
+}
+
 export function externalAnchorProps(href: string): {
   href: string;
   rel?: 'noopener noreferrer';
   target?: '_blank';
 } {
   if (isInstagramHref(href)) {
-    return { href: instagramBridgePath };
+    return { href: instagramBridgeHref(href) };
   }
   return { href, rel: 'noopener noreferrer', target: '_blank' };
 }

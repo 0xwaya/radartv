@@ -111,8 +111,8 @@ export default function ElRadarTvPage() {
         <div>
           <SectionHeading
             eyebrow="Clips"
-            title="Galería honesta mientras se exportan demos propios"
-            description="Sin fingir archivos que aún no existen: enlaces a galerías y canal oficiales."
+            title="Muestras de voz y noticias desde Sonidos"
+            description="Selección viva de deibisromero.com/sonidos (YouTube) para locución comercial y presentaciones."
           />
           <div className="stack">
             {clipTracks.map((track) => (
@@ -135,8 +135,8 @@ export default function ElRadarTvPage() {
             <p className="kicker">Comunidad</p>
             <h3>Sigue la señal en redes mientras crece la capa social del portal.</h3>
             <p>
-              Instagram, TikTok, YouTube y el resto de canales oficiales concentran clips, lives y
-              anuncios del día a día.
+              Instagram (@deibisromero / @elradar_oficial), Twitch (@elradartv), TikTok y YouTube
+              concentran clips, lives y anuncios del día a día.
             </p>
           </div>
           <div className="social-strip social-strip--compact">
