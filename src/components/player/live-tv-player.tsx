@@ -5,7 +5,7 @@ import { AlertCircle, ExternalLink, Pause, Play, RefreshCw } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { usePlayer } from '@/components/player/player-provider';
-import { deibisProfile, stationLiveHlsUrl } from '@/content/site';
+import { stationLiveHlsUrl, stationLivePoster } from '@/content/site';
 import { requestLiveTvPlay } from '@/lib/live-media-events';
 
 type LiveTvPlayerProps = {
@@ -208,7 +208,7 @@ export function LiveTvPlayer({
           className="live-tv__video"
           controls={false}
           playsInline
-          poster={deibisProfile.image}
+          poster={stationLivePoster}
           preload="none"
         />
         <div className="live-tv__overlay">

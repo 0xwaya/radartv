@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Play } from 'lucide-react';
 
 import { usePlayer } from '@/components/player/player-provider';
-import { deibisProfile, minutoEmbedSrc } from '@/content/site';
+import { minutoEmbedSrc, minutoNewsPoster } from '@/content/site';
 import { requestMinutoPlay } from '@/lib/live-media-events';
 
 type MinutoNewsPlayerProps = {
@@ -42,7 +42,7 @@ export function MinutoNewsPlayer({
               className="live-tv__poster"
               fill
               sizes="(max-width: 900px) 100vw, 900px"
-              src={deibisProfile.image}
+              src={minutoNewsPoster}
             />
             <div className="live-tv__idle">
               <div className="live-tv__badge">

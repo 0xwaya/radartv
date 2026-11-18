@@ -200,6 +200,10 @@ export const deibisProfile = {
   ],
 };
 
+/** Idle posters — distinct stills so station TV and Minuto never share the same thumb. */
+export const stationLivePoster = '/images/curated/OtQoAX_udno.jpg';
+export const minutoNewsPoster = '/images/curated/P-azZUZCTrk.jpg';
+
 export const bioTimeline = [
   {
     year: 'Inicios',
