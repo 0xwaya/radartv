@@ -233,16 +233,20 @@ main {
 
 .hero-stage__radar {
   position: absolute;
+  z-index: 2;
   right: -8%;
   top: 42%;
   width: min(68vw, 720px);
   transform: translateY(-50%);
   opacity: 0.55;
   filter: drop-shadow(0 0 40px rgba(114, 212, 232, 0.18));
+  /* Sit above the portrait so the sweep stays readable on desktop. */
+  mix-blend-mode: screen;
 }
 
 .hero-stage__portrait {
   position: absolute;
+  z-index: 1;
   inset: 0 0 0 42%;
   overflow: hidden;
 }
