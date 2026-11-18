@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 type GoInstagramPageProps = {
   searchParams?: Promise<{
-    profile?: string;
+    profile?: string | string[];
   }>;
 };
 
@@ -42,9 +42,14 @@ const profiles = {
 
 type ProfileKey = keyof typeof profiles;
 
+function resolveProfileParam(value: string | string[] | undefined): string | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return typeof raw === 'string' ? raw.toLowerCase() : undefined;
+}
+
 export default async function GoInstagramPage({ searchParams }: GoInstagramPageProps) {
   const resolved = (await searchParams) ?? {};
-  const requested = resolved.profile?.toLowerCase();
+  const requested = resolveProfileParam(resolved.profile);
   const activeKey: ProfileKey =
     requested && requested in profiles ? (requested as ProfileKey) : 'deibisromero';
   const active = profiles[activeKey];
