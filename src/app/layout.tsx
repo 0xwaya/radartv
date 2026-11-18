@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Space_Grotesk } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import { GlobalPlayer } from '@/components/player/global-player';
 import { PlayerProvider } from '@/components/player/player-provider';
@@ -10,16 +10,19 @@ import { siteUrl } from '@/content/site';
 
 import './globals.css';
 
-const display = Cormorant_Garamond({
-  subsets: ['latin'],
+/** Self-hosted to avoid flaky Google Fonts fetches failing Vercel builds. */
+const display = localFont({
+  src: '../fonts/cormorant-garamond.woff2',
   variable: '--font-display',
-  weight: ['500', '600', '700'],
+  weight: '500 700',
+  display: 'swap',
 });
 
-const body = Space_Grotesk({
-  subsets: ['latin'],
+const body = localFont({
+  src: '../fonts/space-grotesk.woff2',
   variable: '--font-body',
-  weight: ['400', '500', '700'],
+  weight: '400 700',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
