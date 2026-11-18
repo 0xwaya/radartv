@@ -23,6 +23,10 @@ const FALLBACK_STREAMS: StreamItem[] = [
   },
 ];
 
+/** UI chrome / hotkey dialog labels that must never appear as stream titles. */
+const JUNK_TITLE_RE =
+  /^(keyboard shortcuts|skip navigation|watch later|added|share|save to playlist|add to queue)$/i;
+
 function decodeTitle(value: string) {
   return value
     .replace(/\\u0026/g, '&')
@@ -33,12 +37,115 @@ function decodeTitle(value: string) {
     .trim();
 }
 
+function isUsableTitle(title: string) {
+  return title.length >= 3 && !JUNK_TITLE_RE.test(title);
+}
+
+/**
+ * Extract balanced `{...}` objects that follow `"key":` in YouTube's
+ * ytInitialData blob. Limited depth/size so a malformed page cannot hang SSR.
+ */
+function extractObjects(html: string, key: string, max = 12, maxLen = 20000): string[] {
+  const needle = `"${key}":{`;
+  const out: string[] = [];
+  let start = 0;
+
+  while (out.length < max) {
+    const i = html.indexOf(needle, start);
+    if (i < 0) break;
+
+    const braceStart = i + needle.length - 1;
+    let depth = 0;
+    let end = -1;
+
+    for (let k = braceStart; k < html.length && k < braceStart + maxLen; k += 1) {
+      const ch = html[k];
+      if (ch === '{') depth += 1;
+      else if (ch === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          end = k;
+          break;
+        }
+      }
+    }
+
+    if (end > braceStart) {
+      out.push(html.slice(i, end + 1));
+    }
+
+    start = i + needle.length;
+  }
+
+  return out;
+}
+
+/** Current YouTube channel /streams markup (lockupViewModel). */
+function parseLockupStreams(html: string, limit: number): StreamItem[] {
+  const seen = new Set<string>();
+  const items: StreamItem[] = [];
+
+  for (const block of extractObjects(html, 'lockupViewModel')) {
+    const idMatch = block.match(/vi\/([a-zA-Z0-9_-]{11})\//);
+    const titleMatch = block.match(
+      /"lockupMetadataViewModel":\{"title":\{"content":"([^"]+)"/,
+    );
+    if (!idMatch || !titleMatch) continue;
+
+    const videoId = idMatch[1];
+    const title = decodeTitle(titleMatch[1]);
+    if (seen.has(videoId) || !isUsableTitle(title)) continue;
+
+    seen.add(videoId);
+    items.push({
+      id: videoId,
+      title,
+      url: `${WATCH_URL}${videoId}`,
+      thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    });
+
+    if (items.length >= limit) break;
+  }
+
+  return items;
+}
+
+/**
+ * Legacy videoRenderer markup. Keep as a fallback — the old regex could
+ * pair a real videoId with nearby UI chrome titles (e.g. "Keyboard shortcuts").
+ */
+function parseLegacyStreams(html: string, limit: number): StreamItem[] {
+  const regex =
+    /"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]*?"title":\{"runs":\[\{"text":"([^"]+)"/g;
+  const seen = new Set<string>();
+  const items: StreamItem[] = [];
+
+  for (const match of html.matchAll(regex)) {
+    const [, videoId, rawTitle] = match;
+    const title = decodeTitle(rawTitle);
+    if (seen.has(videoId) || !isUsableTitle(title)) continue;
+
+    seen.add(videoId);
+    items.push({
+      id: videoId,
+      title,
+      url: `${WATCH_URL}${videoId}`,
+      thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    });
+
+    if (items.length >= limit) break;
+  }
+
+  return items;
+}
+
 export async function getTopStreams(limit = 6): Promise<StreamItem[]> {
   try {
     const response = await fetch(STREAMS_URL, {
       next: { revalidate: 1800 },
       headers: {
-        'User-Agent': 'Mozilla/5.0',
+        'User-Agent':
+          'Mozilla/5.0 (compatible; RadarTV/1.0; +https://radartv.vercel.app)',
       },
     });
 
@@ -47,31 +154,13 @@ export async function getTopStreams(limit = 6): Promise<StreamItem[]> {
     }
 
     const html = await response.text();
-    const regex = /"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]*?"title":\{"runs":\[\{"text":"([^"]+)"/g;
-
-    const seen = new Set<string>();
-    const items: StreamItem[] = [];
-
-    for (const match of html.matchAll(regex)) {
-      const [, videoId, rawTitle] = match;
-      if (seen.has(videoId)) {
-        continue;
-      }
-      seen.add(videoId);
-
-      items.push({
-        id: videoId,
-        title: decodeTitle(rawTitle),
-        url: `${WATCH_URL}${videoId}`,
-        thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-      });
-
-      if (items.length >= limit) {
-        break;
-      }
+    const lockup = parseLockupStreams(html, limit);
+    if (lockup.length > 0) {
+      return lockup;
     }
 
-    return items.length > 0 ? items : FALLBACK_STREAMS;
+    const legacy = parseLegacyStreams(html, limit);
+    return legacy.length > 0 ? legacy : FALLBACK_STREAMS;
   } catch {
     return FALLBACK_STREAMS;
   }
