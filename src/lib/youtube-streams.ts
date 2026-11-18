@@ -29,9 +29,9 @@ const JUNK_TITLE_RE =
 
 function decodeTitle(value: string) {
   return value
-    .replace(/\\u0026/g, '&')
-    .replace(/\\u003c/g, '<')
-    .replace(/\\u003e/g, '>')
+    .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex: string) =>
+      String.fromCharCode(Number.parseInt(hex, 16)),
+    )
     .replace(/\\"/g, '"')
     .replace(/\\n/g, ' ')
     .trim();
@@ -39,6 +39,22 @@ function decodeTitle(value: string) {
 
 function isUsableTitle(title: string) {
   return title.length >= 3 && !JUNK_TITLE_RE.test(title);
+}
+
+function isVideoId(value: string | undefined): value is string {
+  return typeof value === 'string' && /^[a-zA-Z0-9_-]{11}$/.test(value);
+}
+
+/** Prefer the lockup's own contentId; fall back to thumbnail / videoId fields. */
+function extractLockupVideoId(block: string): string | null {
+  const contentId = block.match(/"contentId":"([a-zA-Z0-9_-]{11})"/)?.[1];
+  if (isVideoId(contentId)) return contentId;
+
+  const videoId = block.match(/"videoId":"([a-zA-Z0-9_-]{11})"/)?.[1];
+  if (isVideoId(videoId)) return videoId;
+
+  const fromThumb = block.match(/vi\/([a-zA-Z0-9_-]{11})\//)?.[1];
+  return isVideoId(fromThumb) ? fromThumb : null;
 }
 
 /**
@@ -85,14 +101,13 @@ function parseLockupStreams(html: string, limit: number): StreamItem[] {
   const seen = new Set<string>();
   const items: StreamItem[] = [];
 
-  for (const block of extractObjects(html, 'lockupViewModel')) {
-    const idMatch = block.match(/vi\/([a-zA-Z0-9_-]{11})\//);
+  for (const block of extractObjects(html, 'lockupViewModel', Math.max(limit * 2, 12))) {
+    const videoId = extractLockupVideoId(block);
     const titleMatch = block.match(
       /"lockupMetadataViewModel":\{"title":\{"content":"([^"]+)"/,
     );
-    if (!idMatch || !titleMatch) continue;
+    if (!videoId || !titleMatch) continue;
 
-    const videoId = idMatch[1];
     const title = decodeTitle(titleMatch[1]);
     if (seen.has(videoId) || !isUsableTitle(title)) continue;
 
@@ -115,8 +130,10 @@ function parseLockupStreams(html: string, limit: number): StreamItem[] {
  * pair a real videoId with nearby UI chrome titles (e.g. "Keyboard shortcuts").
  */
 function parseLegacyStreams(html: string, limit: number): StreamItem[] {
+  // Cap the gap between videoId and title so UI chrome elsewhere on the page
+  // cannot be paired with a stream id (the original "Keyboard shortcuts" bug).
   const regex =
-    /"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]*?"title":\{"runs":\[\{"text":"([^"]+)"/g;
+    /"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]{0,800}?"title":\{"runs":\[\{"text":"([^"]+)"/g;
   const seen = new Set<string>();
   const items: StreamItem[] = [];
 
