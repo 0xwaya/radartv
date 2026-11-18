@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { appLinks, deibisProfile, socialLinks, whatsappLink } from '@/content/site';
+import { appLinks, deibisProfile, officialSites, socialLinks, whatsappLink } from '@/content/site';
 import { externalAnchorProps, instagramBridgePath } from '@/lib/external-href';
 
 export function SiteFooter() {
@@ -15,7 +15,7 @@ export function SiteFooter() {
             <p className="site-footer__mark">El Radar TV</p>
             <p className="site-footer__desc">
               Portal oficial de Deibis Romero en Chile: TV y radio en vivo, perfil profesional y
-              contacto directo.
+              contacto directo. Sincronizado con deibisromero.com y elradartv.cl.
             </p>
             <Link className="site-footer__ig" href={instagramBridgePath}>
               @deibisromero
@@ -57,8 +57,13 @@ export function SiteFooter() {
             </div>
 
             <div>
-              <p className="site-footer__title">Apps</p>
-              <nav className="site-footer__links" aria-label="Aplicaciones">
+              <p className="site-footer__title">Sitios y apps</p>
+              <nav className="site-footer__links" aria-label="Sitios y aplicaciones">
+                {officialSites.map((item) => (
+                  <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer">
+                    {item.label}
+                  </a>
+                ))}
                 {appLinks.map((item) => (
                   <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer">
                     {item.label}

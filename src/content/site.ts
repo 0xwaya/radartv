@@ -28,10 +28,32 @@ export const whatsappLink = configuredWhatsAppNumber
 /** Canonical web profile (trailing slash). Avoids app-scheme redirects that Opera rejects as “invalid address”. */
 export const instagramProfileUrl = 'https://www.instagram.com/deibisromero/';
 
+/** Station / medio Instagram referenced alongside El Radar TV. */
+export const elRadarInstagramUrl = 'https://www.instagram.com/elradar_oficial/';
+
+/** Twitch channel for El Radar TV (renamed from deibisromero → elradartv). */
+export const twitchChannelUrl = 'https://www.twitch.tv/elradartv';
+
+/** Legacy sites that still host radio/TV players and profile pages. */
+export const officialSites = [
+  {
+    label: 'deibisromero.com',
+    href: 'https://www.deibisromero.com/',
+  },
+  {
+    label: 'elradartv.cl',
+    href: 'https://elradartv.cl/',
+  },
+];
+
 export const socialLinks = [
   {
     label: 'Instagram',
     href: instagramProfileUrl,
+  },
+  {
+    label: 'Instagram El Radar',
+    href: elRadarInstagramUrl,
   },
   {
     label: 'TikTok',
@@ -48,6 +70,10 @@ export const socialLinks = [
   {
     label: 'YouTube',
     href: 'https://www.youtube.com/@deibisromerolocutor',
+  },
+  {
+    label: 'Twitch',
+    href: twitchChannelUrl,
   },
 ];
 
@@ -105,15 +131,15 @@ export const instagramHighlights = [
  * 3) Minuto news  → minutoEmbed* (tvstream.cl iframe Deibis sent)
  */
 
-/** 1) El Radar Radio — single audio stream URL. */
+/** 1) El Radar Radio — single audio stream URL (canonical on deibisromero.com). */
 export const radioStreamUrl =
   process.env.NEXT_PUBLIC_RADIO_STREAM_URL?.trim() ||
-  'https://stream2.ipstream.cl/8018/stream';
+  'https://stream.ipstream.cl/8008/stream';
 
 export const liveTrack: Track = {
   id: 'deibis-live-radio',
   title: 'El Radar Radio En Vivo',
-  subtitle: 'Señal de radio 24/7 (audio) — stream2.ipstream.cl',
+  subtitle: 'Señal de radio 24/7 (audio) — stream.ipstream.cl/8008',
   url: radioStreamUrl,
   kind: 'live',
   externalUrl: radioStreamUrl,
@@ -154,27 +180,52 @@ export const watchLiveEmbedUrl = minutoEmbedSrc(true);
 /** @deprecated Minuto is an iframe embed; station TV uses stationLiveHlsUrl. */
 export const watchLiveHlsUrl = stationLiveHlsUrl;
 
+/**
+ * Voice / demo clips surfaced on deibisromero.com/sonidos.html (YouTube Gallery).
+ * Only keep videos that still resolve via oEmbed.
+ */
 export const clipTracks: Track[] = [
   {
-    id: 'voice-reel',
-    title: 'Demo de voz',
-    subtitle: 'Galería pública de sonidos mientras se publican archivos directos.',
+    id: 'voice-opticas',
+    title: 'Ópticas Mírate Más',
+    subtitle: 'Locución comercial — muestra desde la galería Sonidos.',
     kind: 'clip',
-    externalUrl: 'https://deibisromero.com/sonidos.html',
+    externalUrl: 'https://www.youtube.com/watch?v=7S7oiKhMpec',
   },
   {
-    id: 'station-id',
-    title: 'IDs de estación',
-    subtitle: 'Identidad sonora y presentaciones disponibles en la galería actual.',
+    id: 'voice-baruch',
+    title: 'Estilos y Belleza Baruch',
+    subtitle: 'Locución comercial en la voz de Deibis Romero.',
     kind: 'clip',
-    externalUrl: 'https://elradartv.cl/sonidos.html',
+    externalUrl: 'https://www.youtube.com/watch?v=DOsyuAZQTgk',
   },
   {
-    id: 'youtube-clips',
-    title: 'Clips destacados',
-    subtitle: 'Selección del canal de YouTube mientras se exporta la librería propia.',
+    id: 'voice-titopal',
+    title: 'Ofertas en Titopal',
+    subtitle: 'Spot comercial — muestra de la galería Sonidos.',
     kind: 'clip',
-    externalUrl: 'https://www.youtube.com/@deibisromerolocutor',
+    externalUrl: 'https://www.youtube.com/watch?v=7fHxsefw6sA',
+  },
+  {
+    id: 'voice-rdo-noticias',
+    title: 'RDO Noticias',
+    subtitle: 'Presentación informativa con Deibis Romero.',
+    kind: 'clip',
+    externalUrl: 'https://www.youtube.com/watch?v=oGDJtm673ts',
+  },
+  {
+    id: 'voice-rdo-tv',
+    title: 'RDO Televisión — Noticias',
+    subtitle: 'Conducción en noticias para RDO Televisión.',
+    kind: 'clip',
+    externalUrl: 'https://www.youtube.com/watch?v=6iQvNUQ-UiY',
+  },
+  {
+    id: 'sonidos-gallery',
+    title: 'Galería Sonidos',
+    subtitle: 'Todas las muestras publicadas en deibisromero.com/sonidos.',
+    kind: 'clip',
+    externalUrl: 'https://www.deibisromero.com/sonidos.html',
   },
 ];
 
@@ -185,14 +236,14 @@ export const brandSummary = {
 
 export const deibisProfile = {
   name: 'Deibis Romero',
-  role: 'Locutor, presentador, productor y fundador',
+  role: 'Locutor y Presentador',
   image: '/images/deibis-portrait.jpg',
   /** Atmosphere crop for the home hero (studio still). */
   heroImage: '/images/deibis-hero.jpg',
   email: 'producciones@deibisromero.com',
   location: 'Concepción, Chile',
   intro:
-    'Comunicador con trayectoria en radio, televisión y producción digital. Hoy transmite desde Concepción con El Radar TV y Radio, enfocado en señal en vivo, voz profesional y colaboraciones de marca.',
+    'Locutor venezolano con trayectoria en radio, televisión y producción digital. Desde Concepción opera El Radar TV y Radio (señal 24/7), colabora con Radio Energía 95.7 / 101.9 FM y ofrece voz profesional para marcas y medios.',
   stats: [
     { label: 'Enfoque', value: 'Radio + TV + Voz' },
     { label: 'Base actual', value: 'Concepción, Chile' },
@@ -207,23 +258,23 @@ export const minutoNewsPoster = '/images/curated/P-azZUZCTrk.jpg';
 export const bioTimeline = [
   {
     year: 'Inicios',
-    text: 'Nace el 27 de agosto de 1984. Se inicia en la Emisora Comunitaria Senderos de Antímano 88.5 FM como locutor y productor, y colabora en Reto TV por Venezolana de Televisión.',
+    text: 'Nace el 27 de agosto de 1984. Se inicia en la Emisora Comunitaria Senderos de Antímano 88.5 FM como locutor y productor de micros, publicidad y noticias, y colabora en Reto TV por Venezolana de Televisión (canal 8).',
   },
   {
     year: '2008-2014',
-    text: 'Docente integral, actor con Ícaro Producciones, apoyo técnico en Tuyera 107.7 FM y productor-locutor en Vacilón 106.3 FM con reporte de tránsito. Obtiene certificado de locutor (50.482) en la Universidad Bolivariana de Venezuela.',
+    text: 'Docente integral en el Instituto Náutico Luz Bolivariana, actor con Ícaro Producciones (Show de Ronald McDonald’s), apoyo técnico en Tuyera 107.7 FM y productor-locutor en Vacilón 106.3 FM con Howard Ramos. Certificado de locutor 50.482 en la Universidad Bolivariana de Venezuela.',
   },
   {
     year: '2017-2020',
-    text: 'Diagnóstico de autismo de alto funcionamiento lo motiva a apoyar a FundAspie y UNICEF Venezuela. Reportero de tránsito en La Máquina del Aire (Vepaco FM) y creador de “Lo Que Usted No Sabía” en redes y Pacífica 90.7 FM.',
+    text: 'Diagnóstico de autismo de alto funcionamiento lo motiva a apoyar a FundAspie y UNICEF Venezuela. Reportero de tránsito en La Máquina del Aire (Vepaco FM), programa El Radar en los Valles del Tuy, y creador de “Lo Que Usted No Sabía” en redes y Pacífica 90.7 FM.',
   },
   {
     year: '2021-2022',
-    text: 'Lleva El Radar a Radio Chévere en Chile, se radica en Concepción y colabora con Radio Vive Tu Puerto, RDO Televisión y TV8. Lanza su radio online y apps en Play Store / WikiPlay.',
+    text: 'Lleva El Radar a Radio Chévere en Chile, se radica en Concepción y colabora con Radio Vive Tu Puerto, RDO Televisión y TV8. Lanza su radio online en deibisromero.com y apps en Play Store / WikiPlay.',
   },
   {
     year: 'Hoy',
-    text: 'Opera señal 24/7 de música e información, cápsulas informativas, locución comercial y presencia multiplataforma alrededor de El Radar TV y Deibis Romero.',
+    text: 'Opera El Radar Radio/TV 24/7 (música e información), transmite también en Twitch (@elradartv), colabora con Radio Energía 95.7 / 101.9 FM, produce cápsulas informativas y ofrece locución comercial multiplataforma.',
   },
 ];
 
@@ -245,15 +296,15 @@ export const serviceCards = [
 export const radarProgramming = [
   {
     title: 'Señal en vivo',
-    text: 'Experiencia radial continua con flujo musical, personalidad y cercanía directa con la audiencia.',
+    text: 'Radio 24/7 en stream.ipstream.cl/8008 y TV en elradartv.cl / este portal, con acceso inmediato desde móvil.',
   },
   {
-    title: 'Formato entrevista',
-    text: 'Espacio para conversaciones con artistas, cobertura cultural y relatos locales.',
+    title: 'FM y alianzas',
+    text: 'Colaboraciones al aire con Radio Energía 95.7 / 101.9 FM y presencia en directorios como Emisora.cl.',
   },
   {
-    title: 'Publicación de clips',
-    text: 'Contenido corto reutilizable para reels, actualizaciones del sitio y distribución en canales.',
+    title: 'Clips y Twitch',
+    text: 'Muestras de voz en YouTube/Sonidos, lives en Twitch (@elradartv) y distribución corta en Instagram y TikTok.',
   },
 ];
 

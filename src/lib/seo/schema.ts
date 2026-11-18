@@ -1,9 +1,8 @@
-import { deibisProfile, siteUrl, socialLinks } from '@/content/site';
+import { deibisProfile, officialSites, siteUrl, socialLinks } from '@/content/site';
 
 const sameAs = [
   ...socialLinks.map((item) => item.href),
-  'https://elradartv.cl',
-  'https://deibisromero.com',
+  ...officialSites.map((item) => item.href),
 ];
 
 export function buildPersonSchema() {
