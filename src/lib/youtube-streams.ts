@@ -103,8 +103,9 @@ function parseLockupStreams(html: string, limit: number): StreamItem[] {
 
   for (const block of extractObjects(html, 'lockupViewModel', Math.max(limit * 2, 12))) {
     const videoId = extractLockupVideoId(block);
+    // Allow JSON-escaped quotes (\") inside titles instead of cutting at the first ".
     const titleMatch = block.match(
-      /"lockupMetadataViewModel":\{"title":\{"content":"([^"]+)"/,
+      /"lockupMetadataViewModel":\{"title":\{"content":"((?:\\.|[^"\\])*)"/,
     );
     if (!videoId || !titleMatch) continue;
 
@@ -133,7 +134,7 @@ function parseLegacyStreams(html: string, limit: number): StreamItem[] {
   // Cap the gap between videoId and title so UI chrome elsewhere on the page
   // cannot be paired with a stream id (the original "Keyboard shortcuts" bug).
   const regex =
-    /"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]{0,800}?"title":\{"runs":\[\{"text":"([^"]+)"/g;
+    /"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]{0,800}?"title":\{"runs":\[\{"text":"((?:\\.|[^"\\])*)"/g;
   const seen = new Set<string>();
   const items: StreamItem[] = [];
 
