@@ -11,15 +11,17 @@ import {
 } from 'react';
 
 import { deibisProfile, liveTrack, type Track } from '@/content/site';
-import { LIVE_TV_PLAY_EVENT } from '@/lib/live-media-events';
+import { LIVE_TV_PLAY_EVENT, MINUTO_PLAY_EVENT } from '@/lib/live-media-events';
 
-export type ActiveMedium = 'none' | 'radio' | 'tv';
+/** Exactly one live medium may own audio/video at a time. */
+export type ActiveMedium = 'none' | 'radio' | 'tv' | 'minuto';
 
 type PlayerContextValue = {
   currentTrack: Track | null;
   isPlaying: boolean;
   isLoading: boolean;
   isTvActive: boolean;
+  isMinutoActive: boolean;
   activeMedium: ActiveMedium;
   volume: number;
   errorMessage: string | null;
@@ -27,6 +29,8 @@ type PlayerContextValue = {
   togglePlayback: () => Promise<void>;
   startTv: () => void;
   stopTv: () => void;
+  startMinuto: () => void;
+  stopMinuto: () => void;
   setVolume: (volume: number) => void;
   stop: () => void;
   clearError: () => void;
@@ -76,13 +80,24 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isTvActive, setIsTvActive] = useState(false);
+  const [isMinutoActive, setIsMinutoActive] = useState(false);
   const [volume, setVolumeState] = useState(0.72);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const activeMedium: ActiveMedium = isTvActive ? 'tv' : isPlaying || isLoading ? 'radio' : 'none';
+  const activeMedium: ActiveMedium = isMinutoActive
+    ? 'minuto'
+    : isTvActive
+      ? 'tv'
+      : isPlaying || isLoading
+        ? 'radio'
+        : 'none';
 
   const stopTv = useCallback(() => {
     setIsTvActive(false);
+  }, []);
+
+  const stopMinuto = useCallback(() => {
+    setIsMinutoActive(false);
   }, []);
 
   const stopRadio = useCallback(() => {
@@ -99,12 +114,23 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const startTv = useCallback(() => {
     stopRadio();
+    stopMinuto();
     setIsTvActive(true);
     document.getElementById('tv-en-vivo')?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
     });
-  }, [stopRadio]);
+  }, [stopMinuto, stopRadio]);
+
+  const startMinuto = useCallback(() => {
+    stopRadio();
+    stopTv();
+    setIsMinutoActive(true);
+    document.getElementById('minuto-noticia')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  }, [stopRadio, stopTv]);
 
   useEffect(() => {
     const audio = ensureAudioElement(audioRef);
@@ -167,12 +193,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     syncMediaSession(currentTrack, isPlaying);
   }, [currentTrack, isPlaying]);
 
-  // Hero “Ver TV En Vivo” and in-player CTA both go through this event.
   useEffect(() => {
     const onPlayTv = () => startTv();
+    const onPlayMinuto = () => startMinuto();
     window.addEventListener(LIVE_TV_PLAY_EVENT, onPlayTv);
-    return () => window.removeEventListener(LIVE_TV_PLAY_EVENT, onPlayTv);
-  }, [startTv]);
+    window.addEventListener(MINUTO_PLAY_EVENT, onPlayMinuto);
+    return () => {
+      window.removeEventListener(LIVE_TV_PLAY_EVENT, onPlayTv);
+      window.removeEventListener(MINUTO_PLAY_EVENT, onPlayMinuto);
+    };
+  }, [startMinuto, startTv]);
 
   const playTrack = useCallback(
     async (track: Track) => {
@@ -183,8 +213,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Exclusive: radio kills TV embed so it cannot keep playing in the background.
+      // Exclusive: radio kills station TV and Minuto so nothing overlaps.
       stopTv();
+      stopMinuto();
 
       const audio = ensureAudioElement(audioRef);
       setCurrentTrack(track);
@@ -218,7 +249,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         }
       }
     },
-    [stopTv],
+    [stopMinuto, stopTv],
   );
 
   const togglePlayback = useCallback(async () => {
@@ -232,6 +263,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (audio.paused) {
       try {
         stopTv();
+        stopMinuto();
         setErrorMessage(null);
         setIsLoading(true);
         await audio.play();
@@ -244,7 +276,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
 
     audio.pause();
-  }, [currentTrack, playTrack, stopTv]);
+  }, [currentTrack, playTrack, stopMinuto, stopTv]);
 
   useEffect(() => {
     if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
@@ -286,6 +318,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     isPlaying,
     isLoading,
     isTvActive,
+    isMinutoActive,
     activeMedium,
     volume,
     errorMessage,
@@ -293,6 +326,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     togglePlayback,
     startTv,
     stopTv,
+    startMinuto,
+    stopMinuto,
     setVolume,
     stop,
     clearError,

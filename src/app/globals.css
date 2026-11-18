@@ -932,6 +932,20 @@ main {
   padding-top: 0;
 }
 
+.live-tv__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(5, 11, 21, 0.45) 0%, transparent 28%),
+    linear-gradient(0deg, rgba(5, 11, 21, 0.72) 0%, transparent 38%);
+}
+
 .live-tv__iframe,
 .live-tv__poster {
   position: absolute;

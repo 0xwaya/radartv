@@ -98,25 +98,44 @@ export const instagramHighlights = [
   },
 ];
 
+/**
+ * Three distinct live signals — do not cross-wire these:
+ * 1) Radio audio  → liveTrack / radioStreamUrl (ipstream MP3)
+ * 2) Station TV   → stationLiveHlsUrl (ipstream HLS — previous working player)
+ * 3) Minuto news  → minutoEmbed* (tvstream.cl iframe Deibis sent)
+ */
+
+/** 1) El Radar Radio — single audio stream URL. */
+export const radioStreamUrl =
+  process.env.NEXT_PUBLIC_RADIO_STREAM_URL?.trim() ||
+  'https://stream2.ipstream.cl/8018/stream';
+
 export const liveTrack: Track = {
   id: 'deibis-live-radio',
   title: 'El Radar Radio En Vivo',
-  subtitle: 'Música 24/7, actualidad e identidad en vivo de Deibis Romero',
-  url:
-    process.env.NEXT_PUBLIC_RADIO_STREAM_URL?.trim() ||
-    'https://stream2.ipstream.cl/8018/stream',
+  subtitle: 'Señal de radio 24/7 (audio) — stream2.ipstream.cl',
+  url: radioStreamUrl,
   kind: 'live',
-  externalUrl: 'https://stream2.ipstream.cl/8018/stream',
+  externalUrl: radioStreamUrl,
 };
 
-/** Official El Radar TV player embed from Deibis / tvstream.cl (no autoplay by default). */
-export const watchLiveEmbedBaseUrl =
+/** 2) Señal de la estación — live TV HLS that was working before the tvstream swap. */
+export const stationLiveHlsUrl =
+  process.env.NEXT_PUBLIC_STATION_HLS_URL?.trim() ||
+  'https://video.ipstream.cl:3459/hybrid/play.m3u8';
+
+/** Primary station TV URL (HLS). Alias kept for older imports. */
+export const watchLiveUrl = stationLiveHlsUrl;
+
+/** 3) Minuto en la Noticia — news bulletin embed from Deibis (tvstream VideoPlayer). */
+export const minutoEmbedBaseUrl =
+  process.env.NEXT_PUBLIC_MINUTO_EMBED_URL?.trim()?.replace(/[?&]autoplay=1/, '') ||
   process.env.NEXT_PUBLIC_TV_EMBED_URL?.trim()?.replace(/[?&]autoplay=1/, '') ||
   'https://panel.tvstream.cl:2020/VideoPlayer/xzfsepkbtx';
 
-export function watchLiveEmbedSrc(autoplay: boolean) {
+export function minutoEmbedSrc(autoplay: boolean) {
   try {
-    const url = new URL(watchLiveEmbedBaseUrl);
+    const url = new URL(minutoEmbedBaseUrl);
     if (autoplay) {
       url.searchParams.set('autoplay', '1');
     } else {
@@ -124,20 +143,16 @@ export function watchLiveEmbedSrc(autoplay: boolean) {
     }
     return url.toString();
   } catch {
-    return autoplay ? `${watchLiveEmbedBaseUrl}?autoplay=1` : watchLiveEmbedBaseUrl;
+    return autoplay ? `${minutoEmbedBaseUrl}?autoplay=1` : minutoEmbedBaseUrl;
   }
 }
 
-/** @deprecated Prefer watchLiveEmbedSrc(true|false) */
-export const watchLiveEmbedUrl = watchLiveEmbedSrc(true);
-
-/** Direct HLS mirror (same station key); kept as optional fallback / “Abrir fuente”. */
-export const watchLiveHlsUrl =
-  process.env.NEXT_PUBLIC_TV_HLS_URL?.trim() ||
-  'https://panel.tvstream.cl:1936/xzfsepkbtx/xzfsepkbtx/playlist.m3u8';
-
-/** Primary watch URL used by CTAs (opens embed; autoplay only after click). */
-export const watchLiveUrl = watchLiveEmbedSrc(true);
+/** @deprecated Use minutoEmbedSrc — this was mislabeled as station TV. */
+export const watchLiveEmbedSrc = minutoEmbedSrc;
+/** @deprecated Use minutoEmbedSrc(true) */
+export const watchLiveEmbedUrl = minutoEmbedSrc(true);
+/** @deprecated Minuto is an iframe embed; station TV uses stationLiveHlsUrl. */
+export const watchLiveHlsUrl = stationLiveHlsUrl;
 
 export const clipTracks: Track[] = [
   {

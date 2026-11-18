@@ -10,15 +10,34 @@ export function GlobalPlayer() {
     isPlaying,
     isLoading,
     isTvActive,
+    isMinutoActive,
     togglePlayback,
     stop,
     stopTv,
+    stopMinuto,
     setVolume,
     volume,
     errorMessage,
   } = usePlayer();
 
-  const busy = isPlaying || isLoading || isTvActive;
+  const busy = isPlaying || isLoading || isTvActive || isMinutoActive;
+
+  const title = isMinutoActive
+    ? 'Minuto en la Noticia activo'
+    : isTvActive
+      ? 'Señal de la estación activa'
+      : isLoading
+        ? 'Conectando radio en vivo…'
+        : (currentTrack?.title ?? 'Listo para reproducir en vivo');
+
+  const subtitle =
+    errorMessage ??
+    (isMinutoActive
+      ? 'Radio y TV de estación detenidas. Usa Escuchar En Vivo o Ver TV En Vivo para cambiar.'
+      : isTvActive
+        ? 'Radio y Minuto detenidos. Usa Escuchar En Vivo para volver a la radio.'
+        : (currentTrack?.subtitle ??
+          'Radio, señal de estación y Minuto son señales distintas — una a la vez.'));
 
   return (
     <div className={`global-player${busy ? ' global-player--active' : ''}`}>
@@ -29,21 +48,11 @@ export function GlobalPlayer() {
             Reproductor permanente
           </span>
           <div>
-            <p className="global-player__title">
-              {isTvActive
-                ? 'TV en vivo activa'
-                : isLoading
-                  ? 'Conectando radio en vivo…'
-                  : (currentTrack?.title ?? 'Listo para reproducir en vivo')}
-            </p>
+            <p className="global-player__title">{title}</p>
             <p
               className={`global-player__subtitle${errorMessage ? ' global-player__subtitle--error' : ''}`}
             >
-              {errorMessage ??
-                (isTvActive
-                  ? 'La radio está detenida mientras corre la TV. Usa Escuchar En Vivo para cambiar.'
-                  : (currentTrack?.subtitle ??
-                    'Usa cualquier acción en vivo para iniciar la reproducción.'))}
+              {subtitle}
             </p>
           </div>
         </div>
@@ -62,6 +71,7 @@ export function GlobalPlayer() {
             onClick={() => {
               stop();
               stopTv();
+              stopMinuto();
             }}
             type="button"
           >

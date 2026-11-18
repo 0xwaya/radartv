@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import { InstagramCurated } from '@/components/instagram-curated';
 import { LiveTvPlayer, WatchLiveButton } from '@/components/player/live-tv-player';
+import { MinutoNewsPlayer, WatchMinutoButton } from '@/components/player/minuto-news-player';
 import { PlayerLaunchButton } from '@/components/player/player-launch-button';
 import { RadarVector } from '@/components/radar-vector';
 import { SectionHeading } from '@/components/section-heading';
@@ -41,6 +42,7 @@ export default function ElRadarTvPage() {
           <div className="hero__actions">
             <PlayerLaunchButton track={liveTrack} />
             <WatchLiveButton />
+            <WatchMinutoButton />
           </div>
         </div>
         <div className="hero__visual hero__visual--stack">
@@ -57,11 +59,20 @@ export default function ElRadarTvPage() {
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="TV en vivo"
-          title="La señal de video vive en el portal"
-          description="Reproductor oficial de El Radar TV (tvstream.cl), con autoplay desde el portal y enlace HLS de respaldo."
+          eyebrow="TV · Estación"
+          title="Señal de video de la estación"
+          description="HLS de la estación (ipstream) — la señal previa que ya funcionaba. Distinta de Minuto y de la radio."
         />
         <LiveTvPlayer />
+      </section>
+
+      <section className="shell content-block">
+        <SectionHeading
+          eyebrow="Noticias · Minuto"
+          title="Minuto en la Noticia"
+          description="Embed tvstream.cl que envió Deibis para el boletín informativo — no es la señal de la estación."
+        />
+        <MinutoNewsPlayer />
       </section>
 
       <section className="shell content-block">

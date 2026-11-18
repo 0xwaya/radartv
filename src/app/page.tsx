@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { InstagramCurated } from '@/components/instagram-curated';
 import { LiveTvPlayer, WatchLiveButton } from '@/components/player/live-tv-player';
+import { MinutoNewsPlayer, WatchMinutoButton } from '@/components/player/minuto-news-player';
 import { PlayerLaunchButton } from '@/components/player/player-launch-button';
 import { RadarVector } from '@/components/radar-vector';
 import { SectionHeading } from '@/components/section-heading';
@@ -49,9 +50,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     newsTitle: lang === 'es' ? 'Minuto en la Noticia' : 'Minuto en la Noticia',
     newsCardDesc:
       lang === 'es'
-        ? 'El boletín informativo de El Radar: titulares claros, al aire y en archivo.'
-        : 'El Radar’s news bulletin: clear headlines, live and on demand.',
-    newsCta: lang === 'es' ? 'Ver emisiones' : 'Watch episodes',
+        ? 'Boletín informativo (embed tvstream). Distinto de la radio y de la señal de la estación.'
+        : 'News bulletin (tvstream embed). Separate from radio and the station live feed.',
+    newsCta: lang === 'es' ? 'Ver Minuto' : 'Watch Minuto',
     contactCardTitle: lang === 'es' ? 'Habla con Deibis' : 'Talk to Deibis',
     contactCardDesc:
       lang === 'es'
@@ -129,9 +130,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <span className="pill">{t.newsPill}</span>
           <h2>{t.newsTitle}</h2>
           <p>{t.newsCardDesc}</p>
-          <a className="button button--secondary" href="#emisiones">
-            {t.newsCta}
-          </a>
+          <WatchMinutoButton label={t.newsCta} />
         </article>
         <article className="action-rail__item">
           <span className="pill">Contacto</span>
@@ -145,15 +144,30 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
       <section className="shell content-block">
         <SectionHeading
-          eyebrow="TV"
-          title={lang === 'es' ? 'Mira la señal en el portal' : 'Watch the feed in the portal'}
+          eyebrow={lang === 'es' ? 'TV · Estación' : 'TV · Station'}
+          title={
+            lang === 'es' ? 'Señal de video de la estación' : 'Station live video feed'
+          }
           description={
             lang === 'es'
-              ? 'Reproductor oficial de El Radar TV (tvstream.cl) con respaldo HLS.'
-              : 'Official El Radar TV player (tvstream.cl) with an HLS fallback.'
+              ? 'HLS de la estación (ipstream) — la señal que ya funcionaba en el portal. No es Minuto ni la radio.'
+              : 'Station HLS (ipstream) — the feed that already worked here. Not Minuto, not radio.'
           }
         />
         <LiveTvPlayer />
+      </section>
+
+      <section className="shell content-block">
+        <SectionHeading
+          eyebrow={lang === 'es' ? 'Noticias · Minuto' : 'News · Minuto'}
+          title={t.newsTitle}
+          description={
+            lang === 'es'
+              ? 'Embed que envió Deibis (tvstream.cl). Boletín informativo, separado de la señal de la estación.'
+              : 'Embed Deibis sent (tvstream.cl). News bulletin, separate from the station live feed.'
+          }
+        />
+        <MinutoNewsPlayer />
       </section>
 
       <section className="shell content-block" id="emisiones">
