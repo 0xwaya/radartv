@@ -49,10 +49,10 @@ export default function ElRadarTvPage() {
           <RadarVector className="hero__radar hero__radar--media" />
           <Image
             alt="Deibis Romero — El Radar TV"
-            height={750}
+            height={900}
             priority
             src={deibisProfile.image}
-            width={600}
+            width={900}
           />
         </div>
       </section>
