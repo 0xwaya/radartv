@@ -55,10 +55,10 @@ export default function DeibisRomeroPage() {
         <div className="hero__visual">
           <Image
             alt={deibisProfile.name}
-            height={750}
+            height={900}
             priority
             src={deibisProfile.image}
-            width={600}
+            width={900}
           />
         </div>
       </section>

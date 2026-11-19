@@ -47,6 +47,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         ? 'Señal principal con el reproductor integrado.'
         : 'Main feed with the integrated player.',
     newsPill: lang === 'es' ? 'Programa' : 'Show',
+    contactPill: lang === 'es' ? 'Contacto' : 'Contact',
     newsTitle: lang === 'es' ? 'Minuto en la Noticia' : 'Minuto en la Noticia',
     newsCardDesc:
       lang === 'es'
@@ -99,7 +100,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               className="hero-stage__portrait-img"
               fill
               priority
-              sizes="(max-width: 900px) 100vw, 48vw"
+              sizes="(max-width: 980px) 100vw, 58vw"
               src={deibisProfile.heroImage}
             />
           </div>
@@ -133,7 +134,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <WatchMinutoButton label={t.newsCta} />
         </article>
         <article className="action-rail__item">
-          <span className="pill">Contacto</span>
+          <span className="pill">{t.contactPill}</span>
           <h2>{t.contactCardTitle}</h2>
           <p>{t.contactCardDesc}</p>
           <a className="button button--secondary" href={whatsappLink} rel="noreferrer" target="_blank">
